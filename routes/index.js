@@ -563,7 +563,7 @@ router.post("/join-privilege-club", async (req, res) => {
     return res.status(201).json({
       success: true,
       message:
-        "Welcome to Scatch Privilege Club! Your membership is activated.",
+        "Welcome to ShopSite Privilege Club! Your membership is activated.",
       member: newMember,
     });
   } catch (err) {
