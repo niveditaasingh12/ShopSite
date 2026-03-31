@@ -1,0 +1,88 @@
+
+<%- include('./adminpartials/header.ejs') %>
+
+  <!-- Flash Message -->
+  <% if (success && success.length > 0) { %>
+  <div id="flash-msg-success" class="fixed top-24 right-4 sm:right-auto sm:left-1/2 sm:-translate-x-1/2 z-50 bg-yellow-500 text-gray-900 px-3 sm:px-5 py-1.5 sm:py-2 rounded shadow-lg max-w-xs flex items-center justify-between gap-2">
+    <span class="text-xs sm:text-sm font-semibold flex-1"><%= success %></span>
+    <button type="button" onclick="this.parentElement.remove()" class="text-gray-900 hover:text-gray-700 font-bold text-lg shrink-0 ml-1">&times;</button>
+  </div>
+<% } %>
+
+<% if (error && error.length > 0) { %>
+  <div id="flash-msg-error" class="fixed top-24 right-4 sm:right-auto sm:left-1/2 sm:-translate-x-1/2 z-50 bg-yellow-500 text-gray-900 px-3 sm:px-5 py-1.5 sm:py-2 rounded shadow-lg max-w-xs flex items-center justify-between gap-2">
+    <span class="text-xs sm:text-sm font-semibold flex-1"><%= error %></span>
+    <button type="button" onclick="this.parentElement.remove()" class="text-gray-900 hover:text-gray-700 font-bold text-lg shrink-0 ml-1">&times;</button>
+  </div>
+<% } %>
+
+
+  <!-- Product Creation Panel -->
+  <div class="min-h-screen bg-gray-100 flex justify-center px-4 pt-6 pb-10">
+    <div class="bg-white w-full max-w-4xl rounded-lg shadow-lg p-10">
+      <h2 class="text-2xl font-bold mb-6 text-gray-800">Create New Product</h2>
+
+      <form action="/products/create" method="post" enctype="multipart/form-data" class="space-y-6">
+        <!-- Product Image -->
+        <div>
+          <label class="block mb-2 text-sm font-medium text-gray-700">Product Image</label>
+          <input name="image" type="file"
+            class="block w-full text-sm text-gray-900 border border-gray-300 rounded-md cursor-pointer bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+        </div>
+
+        <!-- Product Details -->
+        <div>
+          <h3 class="text-lg font-semibold text-gray-800 mb-3">Product Details</h3>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <input name="name" type="text" placeholder="Product Name"
+              class="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-500 outline-none" />
+            <input name="price" type="number" placeholder="Product Price"
+              class="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-500 outline-none" />
+            <input name="discount" type="number" placeholder="Discount Price"
+              class="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-500 outline-none" />
+          </div>
+        </div>
+
+        <!-- Panel Styling -->
+        <div>
+          <h3 class="text-lg font-semibold text-gray-800 mb-3">Panel Styling</h3>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <input name="bgcolor" type="text" placeholder="Background Color"
+              class="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-500 outline-none" />
+            <input name="panelcolor" type="text" placeholder="Panel Color"
+              class="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-500 outline-none" />
+            <input name="textcolor" type="text" placeholder="Text Color"
+              class="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-500 outline-none" />
+          </div>
+        </div>
+
+        <!-- Submit Button -->
+        <div class="pt-4">
+          <button type="submit"
+            class="bg-blue-600 hover:bg-blue-700 transition text-white px-6 py-2 rounded-md font-medium">
+            Create Product
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Flash message auto-dismiss -->
+  <script>
+    setTimeout(() => {
+      const msg = document.getElementById("flash-msg");
+      if (msg) msg.remove();
+    }, 4000);
+  </script>
+
+  <script>
+  setTimeout(() => {
+    const successMsg = document.getElementById("flash-msg-success");
+    const errorMsg = document.getElementById("flash-msg-error");
+    if (successMsg) successMsg.remove();
+    if (errorMsg) errorMsg.remove();
+  }, 4000);
+</script>
+
+
+<%- include('./adminpartials/footer.ejs') %>

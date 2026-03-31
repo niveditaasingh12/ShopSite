@@ -1,0 +1,138 @@
+
+<script>
+    setTimeout(() => {
+        const success = document.getElementById('flash-success');
+        const error = document.getElementById('flash-error');
+
+        if (success) {
+            success.style.opacity = '0';
+            setTimeout(() => success.remove(), 500);
+        }
+
+        if (error) {
+            error.style.opacity = '0';
+            setTimeout(() => error.remove(), 500);
+        }
+    }, 4000); // disappears after 4 seconds
+</script>
+
+
+<%- include('../adminpartials/header') %>
+
+<div class="max-w-7xl mx-auto px-6 lg:px-16 py-8 bg-gray-50 min-h-screen">
+    <div class="mb-8">
+        <h1 class="text-4xl font-bold text-gray-900">Dashboard</h1>
+        <p class="text-gray-600 mt-2">Real-time analytics and insights</p>
+    </div>
+
+   <% if (success && success.length > 0) { %>
+    <div id="flash-success" class="fixed top-24 right-4 sm:right-auto sm:left-1/2 sm:-translate-x-1/2 z-50 bg-yellow-500 text-gray-900 px-3 sm:px-5 py-1.5 sm:py-2 rounded shadow-lg max-w-xs flex items-center justify-between gap-2 transition-opacity duration-500" role="alert">
+        <p class="text-xs sm:text-sm font-semibold flex-1"><%= success %></p>
+        <button type="button" onclick="this.parentElement.remove()" class="text-gray-900 hover:text-gray-700 font-bold text-lg shrink-0 ml-1">&times;</button>
+    </div>
+<% } %>
+
+<% if (error && error.length > 0) { %>
+    <div id="flash-error" class="fixed top-24 right-4 sm:right-auto sm:left-1/2 sm:-translate-x-1/2 z-50 bg-yellow-500 text-gray-900 px-3 sm:px-5 py-1.5 sm:py-2 rounded shadow-lg max-w-xs flex items-center justify-between gap-2 transition-opacity duration-500" role="alert">
+        <p class="text-xs sm:text-sm font-semibold flex-1"><%= error %></p>
+        <button type="button" onclick="this.parentElement.remove()" class="text-gray-900 hover:text-gray-700 font-bold text-lg shrink-0 ml-1">&times;</button>
+    </div>
+<% } %>
+
+
+    <!-- KPI Cards -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
+        <!-- Total Revenue -->
+        <div class="bg-white p-6 border border-gray-200">
+            <div class="flex items-end justify-between">
+                <div>
+                    <p class="text-gray-500 text-xs uppercase tracking-wide mb-2">Revenue</p>
+                    <p class="text-3xl font-semibold text-gray-900">₹<%= (totalRevenue/100000).toFixed(1) %></p>
+                    <p class="text-xs text-gray-400 mt-1">Lakhs</p>
+                </div>
+                <i class="ri-money-dollar-circle-line text-gray-300 text-3xl"></i>
+            </div>
+        </div>
+
+        <!-- Orders -->
+        <div class="bg-white p-6 border border-gray-200">
+            <div class="flex items-end justify-between">
+                <div>
+                    <p class="text-gray-500 text-xs uppercase tracking-wide mb-2">Orders</p>
+                    <p class="text-3xl font-bold text-gray-900"><%= totalOrders %></p>
+                    <p class="text-xs text-gray-400 mt-1">Total</p>
+                </div>
+                <i class="ri-shopping-cart-line text-gray-300 text-3xl"></i>
+            </div>
+        </div>
+
+        <!-- Customers -->
+        <div class="bg-white p-6 border border-gray-200">
+            <div class="flex items-end justify-between">
+                <div>
+                    <p class="text-gray-500 text-xs uppercase tracking-wide mb-2">Customers</p>
+                    <p class="text-3xl font-bold text-gray-900"><%= totalUsers %></p>
+                    <p class="text-xs text-gray-400 mt-1">Active</p>
+                </div>
+                <i class="ri-user-3-line text-gray-300 text-3xl"></i>
+            </div>
+        </div>
+
+        <!-- Products -->
+        <div class="bg-white p-6 border border-gray-200">
+            <div class="flex items-end justify-between">
+                <div>
+                    <p class="text-gray-500 text-xs uppercase tracking-wide mb-2">Products</p>
+                    <p class="text-3xl font-bold text-gray-900"><%= totalProducts %></p>
+                    <p class="text-xs text-gray-400 mt-1">Catalog</p>
+                </div>
+                <i class="ri-shopping-bag-line text-gray-300 text-3xl"></i>
+            </div>
+        </div>
+
+        <!-- Avg Order -->
+        <div class="bg-white p-6 border border-gray-200">
+            <div class="flex items-end justify-between">
+                <div>
+                    <p class="text-gray-500 text-xs uppercase tracking-wide mb-2">Avg Order</p>
+                    <p class="text-3xl font-semibold text-gray-900">₹<%= avgOrderValue %></p>
+                    <p class="text-xs text-gray-400 mt-1">Value</p>
+                </div>
+                <i class="ri-bar-chart-2-line text-gray-300 text-3xl"></i>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="bg-white border border-gray-200 p-6">
+        <h2 class="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h2>
+        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3">
+            <a href="/admin/products/create" class="flex flex-col items-center p-4 border border-gray-200 hover:border-gray-400 hover:bg-gray-50 transition">
+                <i class="ri-add-line text-gray-600 text-2xl mb-2"></i>
+                <span class="text-sm text-gray-700 text-center">New Product</span>
+            </a>
+            <a href="/admin/products" class="flex flex-col items-center p-4 border border-gray-200 hover:border-gray-400 hover:bg-gray-50 transition">
+                <i class="ri-box-3-line text-gray-600 text-2xl mb-2"></i>
+                <span class="text-sm text-gray-700 text-center">Products</span>
+            </a>
+            <a href="/admin/orders" class="flex flex-col items-center p-4 border border-gray-200 hover:border-gray-400 hover:bg-gray-50 transition">
+                <i class="ri-truck-line text-gray-600 text-2xl mb-2"></i>
+                <span class="text-sm text-gray-700 text-center">Orders</span>
+            </a>
+            <a href="/admin/users" class="flex flex-col items-center p-4 border border-gray-200 hover:border-gray-400 hover:bg-gray-50 transition">
+                <i class="ri-team-line text-gray-600 text-2xl mb-2"></i>
+                <span class="text-sm text-gray-700 text-center">Customers</span>
+            </a>
+            <a href="/admin/coupons" class="flex flex-col items-center p-4 border border-gray-200 hover:border-gray-400 hover:bg-gray-50 transition">
+                <i class="ri-coupon-line text-gray-600 text-2xl mb-2"></i>
+                <span class="text-sm text-gray-700 text-center">Coupons</span>
+            </a>
+            <a href="/owners/logout" class="flex flex-col items-center p-4 border border-gray-200 hover:border-red-300 hover:bg-red-50 transition">
+                <i class="ri-logout-box-r-line text-gray-600 text-2xl mb-2"></i>
+                <span class="text-sm text-gray-700 text-center">Logout</span>
+            </a>
+        </div>
+    </div>
+</div>
+
+<%- include('../adminpartials/footer') %>

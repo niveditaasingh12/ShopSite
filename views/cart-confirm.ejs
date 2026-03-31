@@ -1,0 +1,165 @@
+<%- include('./partials/header') %>
+
+<div class="bg-gray-50 min-h-screen">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+
+    <!-- Page Header -->
+    <div class="mb-6 flex justify-between items-center">
+      <div>
+        <h1 class="text-xl sm:text-2xl font-bold text-gray-900">Review Your Order</h1>
+        <p class="text-sm text-gray-600 mt-1">Please review your order details before placing it</p>
+      </div>
+      <a href="/checkout" class="text-sm text-blue-600 hover:text-blue-700 font-medium">
+        ← Back to Checkout
+      </a>
+    </div>
+
+    <!-- Main Layout: Two Columns -->
+    <div class="lg:grid lg:grid-cols-12 lg:gap-6">
+      
+      <!-- Left Column: Address & Cart Items -->
+      <div class="lg:col-span-8 space-y-6 mb-6 lg:mb-0">
+        
+        <!-- Delivery Address Section -->
+        <div class="bg-white rounded-lg shadow-sm">
+          <div class="border-b border-gray-200 px-4 sm:px-6 py-4">
+            <h2 class="text-lg font-semibold text-gray-800">Delivery Address</h2>
+          </div>
+          
+          <div class="p-4 sm:p-6">
+            <div class="flex items-start gap-3">
+              <svg class="w-5 h-5 text-gray-400 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+              </svg>
+              <div>
+                <p class="text-sm sm:text-base text-gray-900 font-medium mb-1">
+                  <%= address.line1 %>, <%= address.city %>, <%= address.state %> - <%= address.pincode %>
+                </p>
+                <p class="text-sm text-green-600 flex items-center gap-1">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                  </svg>
+                  Expected delivery by <%= arrivalDate.toLocaleDateString() %>
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Cart Items Section -->
+        <div class="bg-white rounded-lg shadow-sm">
+          <div class="border-b border-gray-200 px-4 sm:px-6 py-4">
+            <h2 class="text-lg font-semibold text-gray-800">Order Items (<%= cartItems.length %>)</h2>
+          </div>
+
+          <!-- Cart Items List -->
+          <div class="divide-y divide-gray-200">
+            <% cartItems.forEach(item => { %>
+              <div class="p-4 sm:p-6">
+                <div class="flex gap-4 sm:gap-6">
+                  
+                  <!-- Product Image -->
+                  <div class="shrink-0">
+                    <img src="<%= item.image %>" alt="<%= item.name %>" class="w-20 h-20 sm:w-24 sm:h-24 object-cover rounded-md border border-gray-200">
+                  </div>
+
+                  <!-- Product Details -->
+                  <div class="flex-1 min-w-0">
+                    <h3 class="text-base sm:text-lg font-medium text-gray-900 mb-2">
+                      <%= item.name %>
+                    </h3>
+                    
+                    <div class="space-y-1 mb-2">
+                      <p class="text-sm text-gray-600">Quantity: <span class="font-medium"><%= item.quantity %></span></p>
+                      <% if (item.size) { %>
+                        <p class="text-sm text-gray-600">Size: <span class="font-medium"><%= item.size %></span></p>
+                      <% } %>
+                    </div>
+
+                    <!-- Price Details -->
+                    <div class="flex items-center gap-2">
+                      <span class="text-base sm:text-lg font-semibold text-gray-900">₹<%= item.itemTotal.toFixed(2) %></span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            <% }) %>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Right Column: Payment & Price Summary -->
+      <div class="lg:col-span-4">
+        <div class="bg-white rounded-lg shadow-sm sticky top-6">
+          <div class="p-4 sm:p-6">
+            
+            <!-- Price Details -->
+            <h2 class="text-lg font-semibold text-gray-800 mb-4 pb-4 border-b border-gray-200">
+              Price Details
+            </h2>
+
+            <div class="space-y-3 mb-4">
+              <div class="flex justify-between text-sm sm:text-base">
+                <span class="text-gray-700">Total Amount</span>
+                <span class="text-gray-900">₹<%= finalTotal.toFixed(2) %></span>
+              </div>
+            </div>
+
+            <div class="border-t border-gray-200 pt-4 mb-6">
+              <div class="flex justify-between items-center">
+                <span class="text-base sm:text-lg font-semibold text-gray-900">Amount Payable</span>
+                <span class="text-xl sm:text-2xl font-semibold text-gray-900">₹<%= finalTotal.toFixed(2) %></span>
+              </div>
+            </div>
+
+            <!-- Payment Method Selection -->
+            <div class="mb-6">
+              <h3 class="text-base font-semibold text-gray-800 mb-3">Payment Method</h3>
+              
+              <div class="space-y-2">
+                <label class="flex items-center gap-3 border border-gray-300 p-3 rounded-md cursor-pointer hover:bg-gray-50 transition">
+                  <input type="radio" name="paymentMethod" value="COD" checked class="accent-yellow-500 w-4 h-4" id="paymentCOD">
+                  <div class="flex items-center gap-2">
+                    <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/>
+                    </svg>
+                    <span class="text-sm font-medium text-gray-800">Cash on Delivery</span>
+                  </div>
+                </label>
+              </div>
+            </div>
+
+            <!-- Place Order Buttons -->
+            <!-- COD Form -->
+            <form id="codForm" action="/place-cart-order" method="POST" class="block">
+              <input type="hidden" name="addressId" value="<%= address._id %>">
+              <input type="hidden" name="paymentMethod" value="COD">
+              <button type="submit" id="codBtn" class="w-full bg-yellow-500 hover:bg-yellow-600 text-white px-6 py-3 rounded-md font-semibold text-base sm:text-lg">
+                Place Order
+              </button>
+            </form>
+
+            <input type="hidden" id="addressId" value="<%= address._id %>">
+            <input type="hidden" id="totalAmount" value="<%= finalTotal %>">
+
+            <!-- Safe & Secure Badge -->
+            <div class="mt-4 flex items-center justify-center gap-2 text-xs text-gray-500">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+              </svg>
+              <span>Safe and Secure Payment</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</div>
+
+<%- include('./partials/footer') %>
+
+

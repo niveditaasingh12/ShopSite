@@ -1,0 +1,782 @@
+<%- include('./partials/header') %>
+
+<div class="min-h-screen bg-gray-50">
+  <!-- Page Header -->
+  <div class="bg-white border-b border-gray-200">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+          <h1 class="text-xl sm:text-2xl font-bold text-gray-900">My Orders</h1>
+          <p class="text-sm text-gray-600 mt-1">View and manage all your orders</p>
+        </div>
+        <!-- Search Box -->
+        <div class="relative">
+          <input 
+            type="text" 
+            id="orderSearch" 
+            placeholder="Search orders..." 
+            class="w-full sm:w-64 pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-yellow-500 text-sm"
+          />
+          <svg class="absolute left-3 top-2.5 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+          </svg>
+        </div>
+      </div>
+
+      <!-- Filter Tabs -->
+      <div class="mt-6 border-b border-gray-200 overflow-x-auto">
+        <nav class="flex space-x-6 whitespace-nowrap" aria-label="Tabs">
+          <button onclick="filterOrders('all')" class="filter-tab active px-1 py-3 text-sm font-medium border-b-2 border-yellow-500 text-gray-900">
+            All Orders (<span id="count-all"><%= orders.length %></span>)
+          </button>
+          <button onclick="filterOrders('pending')" class="filter-tab px-1 py-3 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300">
+            On the way (<span id="count-pending">0</span>)
+          </button>
+          <button onclick="filterOrders('delivered')" class="filter-tab px-1 py-3 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300">
+            Delivered (<span id="count-delivered">0</span>)
+          </button>
+          <button onclick="filterOrders('cancelled')" class="filter-tab px-1 py-3 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300">
+            Cancelled (<span id="count-cancelled">0</span>)
+          </button>
+        </nav>
+      </div>
+    </div>
+  </div>
+
+  <!-- Orders Container -->
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+    <% if (orders.length === 0) { %>
+      <!-- Empty State -->
+      <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-8 sm:p-12 text-center">
+        <svg class="mx-auto h-16 w-16 sm:h-20 sm:w-20 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+        </svg>
+        <h3 class="text-lg sm:text-xl font-semibold text-gray-900 mb-2">No Orders Yet</h3>
+        <p class="text-sm sm:text-base text-gray-600 mb-6">You haven't placed any orders yet. Start shopping today!</p>
+        <a href="/shop" class="inline-block bg-yellow-500 hover:bg-yellow-600 text-gray-900 font-semibold px-6 py-2.5 rounded-lg transition duration-200">
+          Continue Shopping
+        </a>
+      </div>
+    <% } else { %>
+      <!-- Orders List -->
+      <div class="space-y-4 sm:space-y-6" id="ordersContainer">
+        <% orders.forEach(order => { 
+          const deliveryDate = new Date(order.createdAt);
+          deliveryDate.setDate(deliveryDate.getDate() + 7);
+        %>
+          <div class="order-card bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow duration-200" 
+               data-status="<%= order.status.toLowerCase() %>" 
+               data-order-id="<%= order._id.toString() %>"
+               data-search-text="<%= order._id.toString().slice(-8).toLowerCase() %> <%= order.products.map(p => p.product ? p.product.name : '').join(' ').toLowerCase() %> <%= order.address.fullname.toLowerCase() %>">
+            
+            <!-- Order Header -->
+            <div class="bg-gray-50 px-4 sm:px-6 py-3 sm:py-4 border-b border-gray-200">
+              <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
+                <div class="flex flex-col sm:flex-row sm:flex-wrap gap-3 sm:gap-6 text-xs sm:text-sm">
+                  <div>
+                    <p class="text-gray-500 uppercase tracking-wide mb-0.5">Order Placed</p>
+                    <p class="font-medium text-gray-900">
+                      <%= new Date(order.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) %>
+                    </p>
+                  </div>
+                  <div class="h-10 w-px bg-gray-300 hidden sm:block"></div>
+                  <div>
+                    <p class="text-gray-500 uppercase tracking-wide mb-0.5">Total</p>
+                    <p class="font-semibold text-gray-900">₹<%= order.totalAmount.toLocaleString('en-IN') %></p>
+                  </div>
+                  <div class="h-10 w-px bg-gray-300 hidden sm:block"></div>
+                  <div>
+                    <p class="text-gray-500 uppercase tracking-wide mb-0.5">Ship To</p>
+                    <p class="font-medium text-gray-900 truncate" style="max-width: 150px"><%= order.address.fullname %></p>
+                  </div>
+                  <div class="h-10 w-px bg-gray-300 hidden sm:block"></div>
+                  <div>
+                    <p class="text-gray-500 uppercase tracking-wide mb-0.5">Order ID</p>
+                    <p class="font-mono text-gray-900">#<%= order._id.toString().slice(-8).toUpperCase() %></p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Order Body -->
+            <div class="p-4 sm:p-6">
+              
+              <!-- Order Timeline -->
+              <% if (order.status !== 'Cancelled') { %>
+              <div class="mb-6 p-4 rounded-lg border border-gray-200" style="background: linear-gradient(to right, #f9fafb, #ffffff);">
+                <div class="flex items-center justify-between mb-3">
+                  <h3 class="text-sm font-semibold text-gray-900">Order Status</h3>
+                  <% if (order.status === 'Delivered') { %>
+                    <span class="text-xs font-medium text-green-600 bg-green-50 px-2 py-1 rounded">✓ Delivered</span>
+                  <% } else { %>
+                    <span class="text-xs font-medium text-yellow-600 bg-yellow-50 px-2 py-1 rounded">● In Progress</span>
+                  <% } %>
+                </div>
+                
+                <!-- Progress Bar -->
+                <div class="relative">
+                  <div class="overflow-hidden h-2 text-xs flex rounded-full bg-gray-200">
+                      <div style="width: <%= order.status === 'Delivered' ? '100' : order.status === 'Shipped' ? '66' : '33' %>%"
+                         class="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-yellow-500 transition-all duration-500">
+                    </div>
+                  </div>
+                  
+                  <!-- Timeline Steps -->
+                  <div class="flex justify-between mt-4 text-xs">
+                    <div class="flex flex-col items-center flex-1">
+                      <div class="w-8 h-8 rounded-full <%= order.status !== 'Pending' ? 'bg-yellow-500' : 'bg-gray-300' %> flex items-center justify-center mb-2">
+                        <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                          <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                        </svg>
+                      </div>
+                      <span class="text-center font-medium text-gray-900">Confirmed</span>
+                    </div>
+                    <div class="flex flex-col items-center flex-1">
+                      <div class="w-8 h-8 rounded-full <%= order.status === 'Shipped' || order.status === 'Delivered' ? 'bg-yellow-500' : 'bg-gray-300' %> flex items-center justify-center mb-2">
+                        <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                          <path d="M8 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM15 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0z"/>
+                          <path d="M3 4a1 1 0 00-1 1v10a1 1 0 001 1h1.05a2.5 2.5 0 014.9 0H10a1 1 0 001-1V5a1 1 0 00-1-1H3zM14 7a1 1 0 00-1 1v6.05A2.5 2.5 0 0115.95 16H17a1 1 0 001-1v-5a1 1 0 00-.293-.707l-2-2A1 1 0 0015 7h-1z"/>
+                        </svg>
+                      </div>
+                      <span class="text-center font-medium <%= order.status === 'Shipped' || order.status === 'Delivered' ? 'text-gray-900' : 'text-gray-400' %>">Shipped</span>
+                    </div>
+                    <div class="flex flex-col items-center flex-1">
+                      <div class="w-8 h-8 rounded-full <%= order.status === 'Delivered' ? 'bg-green-500' : 'bg-gray-300' %> flex items-center justify-center mb-2">
+                        <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                          <path d="M8 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM15 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0z"/>
+                          <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                        </svg>
+                      </div>
+                      <span class="text-center font-medium <%= order.status === 'Delivered' ? 'text-gray-900' : 'text-gray-400' %>">Delivered</span>
+                    </div>
+                  </div>
+                </div>
+                
+                <!-- Expected Delivery -->
+                <% if (order.status !== 'Delivered') { %>
+                <div class="mt-4 pt-4 border-t border-gray-200">
+                  <div class="flex items-center gap-2 text-sm">
+                    <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    <span class="text-gray-600">Expected delivery by:</span>
+                    <span class="font-semibold text-gray-900">
+                      <%= deliveryDate.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) %>
+                    </span>
+                  </div>
+                </div>
+                <% } %>
+              </div>
+              <% } else { %>
+              <!-- Cancelled Status -->
+              <div class="mb-6 bg-red-50 border border-red-200 rounded-lg p-4">
+                <div class="flex items-start gap-3">
+                  <div class="shrink-0 w-10 h-10 rounded-full bg-red-100 flex items-center justify-center">
+                    <svg class="w-5 h-5 text-red-600" fill="currentColor" viewBox="0 0 20 20">
+                      <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                    </svg>
+                  </div>
+                  <div class="flex-1">
+                    <h3 class="text-sm font-semibold text-red-900 mb-1">Order Cancelled</h3>
+                    <p class="text-sm text-red-700">This order has been cancelled. Refund will be processed within 5-7 business days.</p>
+                  </div>
+                </div>
+              </div>
+              <% } %>
+
+              <!-- Order Items -->
+              <div class="mb-6">
+                <h3 class="text-sm font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                  <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+                  </svg>
+                  Items in this order
+                </h3>
+                <div class="space-y-4">
+                  <% order.products.forEach((item, index) => { %>
+                    <div class="flex gap-4 pb-4 <%= index < order.products.length - 1 ? 'border-b border-gray-100' : '' %>">
+                      <% if (item.product) { %>
+                        <a href="/product/<%= item.product._id %>" class="shrink-0 w-24 h-24 sm:w-28 sm:h-28 bg-white border-2 border-gray-200 rounded-lg overflow-hidden hover:border-yellow-500 transition-colors">
+                          <img src="<%= item.product.image %>" alt="<%= item.product.name %>" class="w-full h-full object-contain p-2" />
+                        </a>
+                        <div class="flex-1 min-w-0">
+                          <a href="/product/<%= item.product._id %>" class="block">
+                            <h4 class="text-sm sm:text-base font-semibold text-gray-900 hover:text-yellow-600 mb-2 line-clamp-2"><%= item.product.name %></h4>
+                          </a>
+                          <div class="grid grid-cols-2 sm:flex sm:flex-wrap gap-x-4 gap-y-1 text-xs sm:text-sm text-gray-600 mb-3">
+                            <div class="flex items-center gap-1.5">
+                              <span class="text-gray-500">Qty:</span>
+                              <span class="font-semibold text-gray-900"><%= item.quantity %></span>
+                            </div>
+                            <% if (item.size) { %>
+                              <div class="flex items-center gap-1.5">
+                                <span class="text-gray-500">Size:</span>
+                                <span class="font-semibold text-gray-900"><%= item.size %></span>
+                              </div>
+                            <% } %>
+                            <% if (item.product.price) { %>
+                              <div class="flex items-center gap-1.5">
+                                <span class="text-gray-500">Price:</span>
+                                <span class="font-semibold text-gray-900">₹<%= (item.product.price * item.quantity).toLocaleString('en-IN') %></span>
+                              </div>
+                            <% } %>
+                            <% if (index === 0) { %>
+                              <div class="flex items-center gap-1.5">
+                                <span class="text-gray-500">Payment:</span>
+                                <span class="font-semibold text-gray-900"><%= order.paymentMethod === 'COD' ? 'COD' : order.paymentMethod %></span>
+                              </div>
+                            <% } %>
+                          </div>
+                          <% if (order.status === 'Delivered') { %>
+                            <div class="flex flex-wrap gap-2">
+                              <button class="text-xs font-medium text-blue-600 hover:text-blue-700 border border-blue-600 hover:bg-blue-50 px-3 py-1.5 rounded transition">
+                                Buy Again
+                              </button>
+                              <button class="text-xs font-medium text-gray-700 hover:text-gray-900 border border-gray-300 hover:bg-gray-50 px-3 py-1.5 rounded transition">
+                                Rate & Review
+                              </button>
+                            </div>
+                          <% } %>
+                        </div>
+                      <% } else { %>
+                        <div class="shrink-0 w-24 h-24 sm:w-28 sm:h-28 bg-gray-100 border border-gray-200 rounded-lg flex items-center justify-center">
+                          <svg class="w-10 h-10 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                          </svg>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                          <h4 class="text-sm sm:text-base font-medium text-gray-500 italic mb-2">Product no longer available</h4>
+                          <div class="flex flex-wrap items-center gap-4 text-xs sm:text-sm text-gray-500">
+                            <span>Qty: <%= item.quantity %></span>
+                            <% if (item.size) { %>
+                              <span>Size: <%= item.size %></span>
+                            <% } %>
+                          </div>
+                        </div>
+                      <% } %>
+                    </div>
+                  <% }) %>
+                </div>
+              </div>
+
+              <!-- Delivery Address -->
+              <div class="mb-6">
+                <div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                  <h4 class="text-sm font-semibold text-gray-900 mb-3 flex items-center gap-2">
+                    <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                    </svg>
+                    Delivery Address
+                  </h4>
+                  <div class="text-sm text-gray-700 space-y-1">
+                    <p class="font-semibold text-gray-900"><%= order.address.fullname %></p>
+                    <p><%= order.address.address %></p>
+                    <p><%= order.address.city %>, <%= order.address.state %> <%= order.address.pincode %></p>
+                    <% if (order.address.phone) { %>
+                      <p class="pt-1 flex items-center gap-1">
+                        <svg class="w-3.5 h-3.5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
+                        </svg>
+                        <span class="font-medium"><%= order.address.phone %></span>
+                      </p>
+                    <% } %>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Action Buttons -->
+              <div class="pt-4 border-t border-gray-200">
+                <% if (order.status !== "Cancelled" && order.status !== "Delivered") { %>
+                  <div class="flex flex-col sm:flex-row gap-2 sm:gap-3">
+                    <form action="/cancel-order/<%= order._id %>" method="POST" class="flex-1 sm:flex-none sm:min-w-[180px]" onsubmit="return handleCancelOrder(event, this)">
+                      <button type="submit" 
+                              class="w-full px-5 py-3 bg-yellow-500 hover:bg-yellow-600 text-gray-900 font-bold rounded-lg flex items-center justify-center gap-2.5">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/>
+                        </svg>
+                        <span class="text-sm sm:text-base">Cancel Order</span>
+                      </button>
+                    </form>
+                  </div>
+                <% } else if (order.status === "Delivered") { %>
+                  <div class="flex flex-col sm:flex-row gap-2 sm:gap-3">
+                    <a href="/contact-us" class="flex-1 sm:flex-none sm:min-w-[180px] px-5 py-3 bg-yellow-500 hover:bg-yellow-600 text-gray-900 font-bold rounded-lg flex items-center justify-center gap-2.5 no-underline">
+                      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                      </svg>
+                      <span class="text-sm sm:text-base">Return/Exchange</span>
+                    </a>
+                    <button onclick="rateProduct('<%= order._id %>')" class="flex-1 sm:flex-none sm:min-w-[180px] px-5 py-3 bg-white border-2 border-gray-300 hover:border-green-400 text-gray-700 hover:text-green-600 font-bold rounded-lg flex items-center justify-center gap-2.5">
+                      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/>
+                      </svg>
+                      <span class="text-sm sm:text-base">Rate Product</span>
+                    </button>
+                  </div>
+                <% } else { %>
+                  <div class="flex flex-col sm:flex-row gap-2 sm:gap-3">
+                    <button onclick="orderAgain(this)" class="flex-1 sm:flex-none sm:min-w-[180px] px-5 py-3 bg-yellow-500 hover:bg-yellow-600 text-gray-900 font-bold rounded-lg flex items-center justify-center gap-2.5">
+                      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                      </svg>
+                      <span class="text-sm sm:text-base">Order Again</span>
+                    </button>
+                  </div>
+                <% } %>
+              </div>
+            </div>
+          </div>
+        <% }) %>
+      </div>
+
+      <!-- Need Help Section -->
+      <% if (orders.length > 0) { %>
+        <div class="mt-8 pt-8 border-t-2 border-gray-200">
+          <div class="text-center">
+            <h3 class="text-lg font-semibold text-gray-900 mb-2">Need Help with Your Orders?</h3>
+            <p class="text-sm text-gray-600 mb-4">Have questions or need assistance? We're here to help!</p>
+            <a href="/contact-us" class="inline-flex items-center justify-center gap-2.5 px-8 py-3 bg-yellow-500 hover:bg-yellow-600 text-gray-900 font-bold rounded-lg">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/>
+              </svg>
+              <span>Contact Support</span>
+            </a>
+          </div>
+        </div>
+      <% } %>
+    <% } %>
+  </div>
+</div>
+
+<!-- Cancel Order Confirmation Modal -->
+<div id="cancelModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4">
+  <div class="bg-white rounded-xl shadow-2xl max-w-md w-full">
+    <div class="bg-gradient-to-r from-yellow-400 to-yellow-500 px-6 py-4 rounded-t-xl">
+      <h3 class="text-xl font-bold text-gray-900 flex items-center gap-2">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+        </svg>
+        Cancel Order
+      </h3>
+    </div>
+    <div class="p-6">
+      <p class="text-gray-700 mb-4">Are you sure you want to cancel this order?</p>
+      <div class="bg-yellow-50 border-l-4 border-yellow-500 p-4 mb-6">
+        <div class="flex items-start">
+          <svg class="w-5 h-5 text-yellow-600 mt-0.5 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+          </svg>
+          <div class="text-sm text-gray-700">
+            <p class="font-semibold mb-1">Refund Information:</p>
+            <ul class="space-y-1">
+              <li>✓ Full refund will be processed</li>
+              <li>✓ Money back in 5-7 business days</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="flex gap-3">
+        <button onclick="closeCancelModal()" class="flex-1 px-4 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold rounded-lg transition">
+          Keep Order
+        </button>
+        <button onclick="confirmCancelOrder()" class="flex-1 px-4 py-2.5 bg-white border-2 border-red-600 text-red-600 hover:bg-red-50 font-semibold rounded-lg transition">
+          Yes, Cancel Order
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  <div class="bg-white rounded-lg shadow-xl max-w-md w-full max-h-[90vh] overflow-y-auto">
+    <div class="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
+      <h3 class="text-lg font-semibold text-gray-900">Need Help with your Order?</h3>
+      <button onclick="closeHelpModal()" class="text-gray-400 hover:text-gray-600 transition">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+        </svg>
+      </button>
+    </div>
+    
+    <div class="p-6">
+      <div class="mb-4 bg-gray-50 rounded-lg p-3 border border-gray-200">
+        <p class="text-xs text-gray-500 mb-1">Order ID</p>
+        <p id="helpOrderId" class="text-sm font-mono font-semibold text-gray-900"></p>
+      </div>
+
+      <div class="space-y-4">
+        <h4 class="text-sm font-semibold text-gray-900">Common Issues</h4>
+        
+        <a href="/contact-us" class="block p-4 border border-gray-200 rounded-lg hover:border-yellow-500 hover:bg-yellow-50 transition group">
+          <div class="flex items-start gap-3">
+            <div class="shrink-0 w-10 h-10 bg-yellow-100 rounded-lg flex items-center justify-center group-hover:bg-yellow-200 transition">
+              <svg class="w-5 h-5 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+              </svg>
+            </div>
+            <div class="flex-1">
+              <h5 class="font-semibold text-gray-900 mb-1">Track my Order</h5>
+              <p class="text-sm text-gray-600">Get real-time updates on your delivery</p>
+            </div>
+          </div>
+        </a>
+
+        <a href="/contact-us" class="block p-4 border border-gray-200 rounded-lg hover:border-yellow-500 hover:bg-yellow-50 transition group">
+          <div class="flex items-start gap-3">
+            <div class="shrink-0 w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center group-hover:bg-blue-200 transition">
+              <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+              </svg>
+            </div>
+            <div class="flex-1">
+              <h5 class="font-semibold text-gray-900 mb-1">Return/Exchange</h5>
+              <p class="text-sm text-gray-600">Initiate return or exchange request</p>
+            </div>
+          </div>
+        </a>
+
+        <a href="/contact-us" class="block p-4 border border-gray-200 rounded-lg hover:border-yellow-500 hover:bg-yellow-50 transition group">
+          <div class="flex items-start gap-3">
+            <div class="shrink-0 w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center group-hover:bg-green-200 transition">
+              <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+              </svg>
+            </div>
+            <div class="flex-1">
+              <h5 class="font-semibold text-gray-900 mb-1">Refund Status</h5>
+              <p class="text-sm text-gray-600">Check your refund processing status</p>
+            </div>
+          </div>
+        </a>
+
+        <a href="/contact-us" class="block p-4 border border-gray-200 rounded-lg hover:border-yellow-500 hover:bg-yellow-50 transition group">
+          <div class="flex items-start gap-3">
+            <div class="shrink-0 w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center group-hover:bg-purple-200 transition">
+              <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/>
+              </svg>
+            </div>
+            <div class="flex-1">
+              <h5 class="font-semibold text-gray-900 mb-1">Contact Support</h5>
+              <p class="text-sm text-gray-600">Chat with our customer support team</p>
+            </div>
+          </div>
+        </a>
+      </div>
+
+      <div class="mt-6 pt-6 border-t border-gray-200">
+        <p class="text-sm text-gray-600 mb-3">Need immediate assistance?</p>
+        <div class="flex flex-col sm:flex-row gap-3">
+          <a href="tel:+911234567890" class="flex-1 px-4 py-2 bg-yellow-500 hover:bg-yellow-600 text-gray-900 font-semibold rounded-lg transition text-center">
+            Call Us
+          </a>
+          <a href="mailto:support@scatch.com" class="flex-1 px-4 py-2 bg-white border-2 border-gray-300 text-gray-700 font-semibold rounded-lg hover:bg-gray-50 transition text-center">
+            Email Us
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+      </button>
+    </div>
+    
+    <div class="p-6">
+      <div class="mb-4 bg-gray-50 rounded-lg p-3 border border-gray-200">
+        <p class="text-xs text-gray-500 mb-1">Order ID</p>
+        <p id="helpOrderId" class="text-sm font-mono font-semibold text-gray-900"></p>
+      </div>
+
+      <div class="space-y-4">
+        <h4 class="text-sm font-semibold text-gray-900">Common Issues</h4>
+        
+        <a href="/contact-us" class="block p-4 border border-gray-200 rounded-lg hover:border-yellow-500 hover:bg-yellow-50 transition group">
+          <div class="flex items-start gap-3">
+            <div class="shrink-0 w-10 h-10 bg-yellow-100 rounded-lg flex items-center justify-center group-hover:bg-yellow-200 transition">
+              <svg class="w-5 h-5 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+              </svg>
+            </div>
+            <div class="flex-1">
+              <h5 class="font-semibold text-gray-900 mb-1">Track my Order</h5>
+              <p class="text-sm text-gray-600">Get real-time updates on your delivery</p>
+            </div>
+          </div>
+        </a>
+
+        <a href="/contact-us" class="block p-4 border border-gray-200 rounded-lg hover:border-yellow-500 hover:bg-yellow-50 transition group">
+          <div class="flex items-start gap-3">
+            <div class="shrink-0 w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center group-hover:bg-blue-200 transition">
+              <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+              </svg>
+            </div>
+            <div class="flex-1">
+              <h5 class="font-semibold text-gray-900 mb-1">Return/Exchange</h5>
+              <p class="text-sm text-gray-600">Initiate return or exchange request</p>
+            </div>
+          </div>
+        </a>
+
+        <a href="/contact-us" class="block p-4 border border-gray-200 rounded-lg hover:border-yellow-500 hover:bg-yellow-50 transition group">
+          <div class="flex items-start gap-3">
+            <div class="shrink-0 w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center group-hover:bg-green-200 transition">
+              <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+              </svg>
+            </div>
+            <div class="flex-1">
+              <h5 class="font-semibold text-gray-900 mb-1">Refund Status</h5>
+              <p class="text-sm text-gray-600">Check your refund processing status</p>
+            </div>
+          </div>
+        </a>
+
+        <a href="/contact-us" class="block p-4 border border-gray-200 rounded-lg hover:border-yellow-500 hover:bg-yellow-50 transition group">
+          <div class="flex items-start gap-3">
+            <div class="shrink-0 w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center group-hover:bg-purple-200 transition">
+              <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/>
+              </svg>
+            </div>
+            <div class="flex-1">
+              <h5 class="font-semibold text-gray-900 mb-1">Contact Support</h5>
+              <p class="text-sm text-gray-600">Chat with our customer support team</p>
+            </div>
+          </div>
+        </a>
+      </div>
+
+      <div class="mt-6 pt-6 border-t border-gray-200">
+        <p class="text-sm text-gray-600 mb-3">Need immediate assistance?</p>
+        <div class="flex flex-col sm:flex-row gap-3">
+          <a href="tel:+911234567890" class="flex-1 px-4 py-2 bg-yellow-500 hover:bg-yellow-600 text-gray-900 font-semibold rounded-lg transition text-center">
+            Call Us
+          </a>
+          <a href="mailto:support@scatch.com" class="flex-1 px-4 py-2 bg-white border-2 border-gray-300 text-gray-700 font-semibold rounded-lg hover:bg-gray-50 transition text-center">
+            Email Us
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  /* Custom styles for line clamping */
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  
+  /* Remove underline from button links */
+  .no-underline {
+    text-decoration: none !important;
+  }
+  
+  /* Loading spinner animation */
+  @keyframes spin {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  
+  .animate-spin {
+    animation: spin 1s linear infinite;
+  }
+  
+  /* Flash message fade animation */
+  @keyframes fadeInOut {
+    0% {
+      opacity: 1;
+    }
+    90% {
+      opacity: 1;
+    }
+    100% {
+      opacity: 0;
+    }
+  }
+</style>
+
+<script>
+  // Auto-dismiss flash messages
+  <% if (success || error) { %>
+  setTimeout(function() {
+    const flashMessage = document.getElementById('flashMessage');
+    if (flashMessage) {
+      flashMessage.style.animation = 'fadeInOut 3s ease-in-out forwards';
+      setTimeout(() => flashMessage.remove(), 3000);
+    }
+  }, 3000);
+  <% } %>
+
+  // Cancel Modal Management
+  let currentCancelForm = null;
+
+  function handleCancelOrder(event, form) {
+    event.preventDefault();
+    currentCancelForm = form;
+    document.getElementById('cancelModal').classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+    return false;
+  }
+
+  function closeCancelModal() {
+    document.getElementById('cancelModal').classList.add('hidden');
+    document.body.style.overflow = 'auto';
+    currentCancelForm = null;
+  }
+
+  function confirmCancelOrder() {
+    if (currentCancelForm) {
+      const form = currentCancelForm;  // Save form reference before closing modal
+      const submitBtn = form.querySelector('button[type="submit"]');
+      
+      // Disable button and show loading state
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = `
+        <svg class="animate-spin h-5 w-5 mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        </svg>
+      `;
+      
+      // Close modal
+      closeCancelModal();
+      
+      // Submit the form with saved reference
+      form.submit();
+    }
+  }
+
+  // Close modal on ESC key
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+      closeCancelModal();
+    }
+  });
+
+  // Filter functionality
+  function filterOrders(status) {
+    const orderCards = document.querySelectorAll('.order-card');
+    const tabs = document.querySelectorAll('.filter-tab');
+    const searchInput = document.getElementById('orderSearch');
+    
+    // Clear search input when filtering
+    searchInput.value = '';
+    
+    // Update active tab
+    tabs.forEach(tab => {
+      tab.classList.remove('active', 'border-yellow-500', 'text-gray-900');
+      tab.classList.add('border-transparent', 'text-gray-500');
+    });
+    event.target.classList.add('active', 'border-yellow-500', 'text-gray-900');
+    event.target.classList.remove('border-transparent', 'text-gray-500');
+    
+    // Filter orders
+    orderCards.forEach(card => {
+      const orderStatus = card.dataset.status;
+      if (status === 'all') {
+        card.style.display = 'block';
+      } else if (status === 'pending') {
+        card.style.display = (orderStatus !== 'delivered' && orderStatus !== 'cancelled') ? 'block' : 'none';
+      } else {
+        card.style.display = orderStatus === status ? 'block' : 'none';
+      }
+    });
+  }
+
+  // Search functionality
+  document.getElementById('orderSearch').addEventListener('input', function(e) {
+    const searchTerm = e.target.value.toLowerCase().trim();
+    const orderCards = document.querySelectorAll('.order-card');
+    
+    // If search is empty, reset to show all orders
+    if (searchTerm === '') {
+      orderCards.forEach(card => {
+        card.style.display = 'block';
+      });
+      return;
+    }
+    
+    orderCards.forEach(card => {
+      const orderId = card.dataset.orderId ? card.dataset.orderId.toLowerCase() : '';
+      const searchText = card.dataset.searchText ? card.dataset.searchText.toLowerCase() : '';
+      
+      // Search in order ID and product names
+      if (orderId.includes(searchTerm) || searchText.includes(searchTerm)) {
+        card.style.display = 'block';
+      } else {
+        card.style.display = 'none';
+      }
+    });
+    
+    // Reset active filter tab to "All Orders" when searching
+    const tabs = document.querySelectorAll('.filter-tab');
+    tabs.forEach(tab => {
+      tab.classList.remove('active', 'border-yellow-500', 'text-gray-900');
+      tab.classList.add('border-transparent', 'text-gray-500');
+    });
+    tabs[0].classList.add('active', 'border-yellow-500', 'text-gray-900');
+    tabs[0].classList.remove('border-transparent', 'text-gray-500');
+  });
+
+  // Calculate order counts
+  document.addEventListener('DOMContentLoaded', function() {
+    const orderCards = document.querySelectorAll('.order-card');
+    let pendingCount = 0;
+    let deliveredCount = 0;
+    let cancelledCount = 0;
+    
+    orderCards.forEach(card => {
+      const status = card.dataset.status;
+      if (status === 'delivered') {
+        deliveredCount++;
+      } else if (status === 'cancelled') {
+        cancelledCount++;
+      } else {
+        pendingCount++;
+      }
+    });
+    
+    document.getElementById('count-pending').textContent = pendingCount;
+    document.getElementById('count-delivered').textContent = deliveredCount;
+    document.getElementById('count-cancelled').textContent = cancelledCount;
+  });
+
+  // Order Again functionality
+  function orderAgain(btn) {
+    // Show loading state
+    btn.disabled = true;
+    btn.innerHTML = `
+      <svg class="animate-spin h-5 w-5 mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+      </svg>
+    `;
+    
+    // Redirect to shop after a short delay
+    setTimeout(() => {
+      window.location.href = '/shop';
+    }, 500);
+  }
+
+  // Rate Product functionality
+  function rateProduct(orderId) {
+    alert('⭐ Thank you for your interest!\n\nRating and review feature coming soon. We value your feedback!');
+  }
+</script>
+
+<%- include('./partials/footer') %>
+
+
+
+

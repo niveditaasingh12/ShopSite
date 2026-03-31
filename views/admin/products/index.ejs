@@ -1,0 +1,142 @@
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const messages = document.querySelectorAll(".flash-message");
+
+        messages.forEach(function (message) {
+            setTimeout(function () {
+                message.classList.add("opacity-0");
+
+                setTimeout(() => {
+                    message.remove();
+                }, 500); // wait for fade animation
+            }, 3000); // disappear after 3 seconds
+        });
+    });
+</script>
+
+<%- include('../../adminpartials/header') %>
+
+<% const items = products || []; %>
+
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-12 py-8">
+
+   <!-- Header -->
+<div class="flex items-center justify-between mb-6">
+
+    <h1 class="text-2xl sm:text-3xl font-bold text-gray-800">
+        Products
+    </h1>
+
+    <a href="/admin/products/create"
+       class="inline-flex items-center bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition text-sm sm:text-base">
+        <i class="ri-add-line mr-2"></i>
+        <span class="hidden sm:inline">Create New Product</span>
+        <span class="sm:hidden">Create</span>
+    </a>
+
+</div>
+
+
+   <% if (success && success.length > 0) { %>
+    <div id="flash-success"
+         class="flash-message fixed top-24 right-4 sm:right-auto sm:left-1/2 sm:-translate-x-1/2 z-50 bg-yellow-500 text-gray-900 px-3 sm:px-5 py-1.5 sm:py-2 rounded shadow-lg max-w-xs flex items-center justify-between gap-2 transition-opacity duration-500">
+        <span class="text-xs sm:text-sm font-semibold flex-1"><%= success %></span>
+        <button type="button" onclick="this.parentElement.remove()" class="text-gray-900 hover:text-gray-700 font-bold text-lg shrink-0 ml-1">&times;</button>
+    </div>
+<% } %>
+
+<% if (error && error.length > 0) { %>
+    <div id="flash-error"
+         class="flash-message fixed top-24 right-4 sm:right-auto sm:left-1/2 sm:-translate-x-1/2 z-50 bg-yellow-500 text-gray-900 px-3 sm:px-5 py-1.5 sm:py-2 rounded shadow-lg max-w-xs flex items-center justify-between gap-2 transition-opacity duration-500">
+        <span class="text-xs sm:text-sm font-semibold flex-1"><%= error %></span>
+        <button type="button" onclick="this.parentElement.remove()" class="text-gray-900 hover:text-gray-700 font-bold text-lg shrink-0 ml-1">&times;</button>
+    </div>
+<% } %>
+
+
+    <% if (items.length > 0) { %>
+
+    <!-- 🔥 Responsive Table (Works on All Screens) -->
+    <div class="bg-white shadow-sm rounded-xl overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="min-w-[700px] w-full divide-y divide-gray-200 text-sm">
+                <thead class="bg-gray-100">
+                    <tr>
+                        <th class="px-4 py-3 text-left font-semibold text-gray-600">Image</th>
+                        <th class="px-4 py-3 text-left font-semibold text-gray-600">Name</th>
+                        <th class="px-4 py-3 text-left font-semibold text-gray-600">Price</th>
+                        <th class="px-4 py-3 text-left font-semibold text-gray-600">Discount</th>
+                        <th class="px-4 py-3 text-left font-semibold text-gray-600 hidden lg:table-cell">Colors</th>
+                        <th class="px-4 py-3 text-right font-semibold text-gray-600">Actions</th>
+                    </tr>
+                </thead>
+
+                <tbody class="divide-y divide-gray-100">
+                    <% items.forEach(function(product) { %>
+                        <tr class="hover:bg-gray-50 transition">
+
+                            <td class="px-4 py-4">
+                                <img class="h-12 w-12 rounded-lg object-cover border"
+                                     src="<%= (product && typeof product.image === 'string') ? product.image : (product && product.image ? ('data:image/jpeg;base64,' + (product.image.toString ? product.image.toString('base64') : '')) : '/images/default/avatar.jpg') %>">
+                            </td>
+
+                            <td class="px-4 py-4 font-medium text-gray-800">
+                                <%= product.name %>
+                            </td>
+
+                            <td class="px-4 py-4">
+                                ₹ <%= product.price %>
+                            </td>
+
+                            <td class="px-4 py-4">
+                                ₹ <%= product.discount %>
+                            </td>
+
+                            <!-- Hide colors only on small screens -->
+                            <td class="px-4 py-4 hidden lg:table-cell">
+                                <div class="flex gap-2">
+                                    <div class="w-4 h-4 rounded-full border" style="background:<%= product.bgcolor %>"></div>
+                                    <div class="w-4 h-4 rounded-full border" style="background:<%= product.panelcolor %>"></div>
+                                    <div class="w-4 h-4 rounded-full border" style="background:<%= product.textcolor %>"></div>
+                                </div>
+                            </td>
+
+                            <td class="px-4 py-4 text-right">
+                                <div class="flex justify-end gap-3 text-xs">
+                                    <a href="/admin/products/edit/<%= product._id %>"
+                                       class="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded-md">
+                                        Update
+                                    </a>
+
+                                    <a href="/admin/products/delete/<%= product._id %>"
+                                       onclick="return confirm('Delete this product?')"
+                                       class="text-red-600 hover:text-red-800 font-medium">
+                                        Delete
+                                    </a>
+                                </div>
+                            </td>
+
+                        </tr>
+                    <% }); %>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <% } else { %>
+
+        <!-- Empty State -->
+        <div class="text-center py-16">
+            <p class="text-gray-500 mb-4">No products found.</p>
+
+            <a href="/admin/products/create"
+               class="inline-flex items-center bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg">
+                <i class="ri-add-line mr-2"></i> Create New Product
+            </a>
+        </div>
+
+    <% } %>
+
+</div>
+
+<%- include('../../adminpartials/footer') %>

@@ -1,0 +1,700 @@
+<%-include('./partials/header') %>
+
+<% if (loggedIn) { %>
+  <!-- Logged-in Home Page -->
+  <div class="min-h-screen bg-[#f4f4f4] font-sans">
+    <!-- Banner Slider Section -->
+    <div class="relative w-full overflow-hidden bg-white">
+      <div class="relative h-64 sm:h-80 md:h-96 max-w-full">
+        
+        <!-- Slider Track -->
+        <div class="banner-slider-track w-full h-full flex transition-transform duration-500">
+          
+          <!-- Slide 1: Banner 7 - Categories -->
+          <div class="banner-slide min-w-full h-full relative">
+            <img src="/uploads/banner/banner7.jpg" alt="Categories" class="w-full h-full object-cover">
+            <div class="absolute inset-0 bg-gradient-to-r from-black/60 to-transparent flex flex-col items-start justify-center text-left text-white px-3 sm:px-8 md:px-16">
+              <h1 class="text-xl sm:text-3xl md:text-5xl lg:text-6xl font-extrabold mb-3 sm:mb-6">Discover Your Style</h1>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-6 mb-3 sm:mb-6 max-w-xs sm:max-w-xl md:max-w-2xl">
+                <div class="bg-white/10 backdrop-blur-sm p-2 sm:p-4 rounded">
+                  <p class="text-sm sm:text-xl md:text-2xl lg:text-3xl font-bold mb-0.5 sm:mb-2">Men's Collection</p>
+                  <p class="text-[10px] sm:text-sm md:text-base">Clothing & Watches</p>
+                </div>
+                <div class="bg-white/10 backdrop-blur-sm p-2 sm:p-4 rounded">
+                  <p class="text-sm sm:text-xl md:text-2xl lg:text-3xl font-bold mb-0.5 sm:mb-2">Women's Collection</p>
+                  <p class="text-[10px] sm:text-sm md:text-base">Clothing & Watches</p>
+                </div>
+              </div>
+              <a href="/shop" class="bg-yellow-500 hover:bg-yellow-600 text-black px-4 sm:px-8 py-1.5 sm:py-3 rounded-full font-bold text-xs sm:text-lg transition shadow-lg">Shop Now</a>
+            </div>
+          </div>
+
+          <!-- Slide 2: Banner 8 - Free Delivery & Payment -->
+         <div class="banner-slide min-w-full h-full relative">
+  <img src="/uploads/banner/banner8.jpg" alt="Offers" class="w-full h-full object-cover">
+
+  <div class="absolute right-4 bottom-4 sm:right-6 sm:bottom-6 md:right-10 md:bottom-10 
+              bg-gradient-to-l from-black/70 via-black/60 to-transparent 
+              flex flex-col items-end justify-end text-right text-white 
+              px-4 sm:px-8 md:px-12 pb-4 sm:pb-6 md:pb-8 
+              w-full sm:w-auto">
+
+    <h1 class="text-base sm:text-xl md:text-3xl lg:text-4xl font-extrabold mb-1 sm:mb-2">
+      Exclusive Offers
+    </h1>
+
+    <div class="space-y-0 sm:space-y-1 mb-2 sm:mb-3 max-w-xs">
+      <p class="text-[9px] sm:text-xs md:text-sm lg:text-base">🚚 Free Delivery on First Order</p>
+      <p class="text-[9px] sm:text-xs md:text-sm lg:text-base">💳 Secure Online Payment</p>
+      <p class="text-[9px] sm:text-xs md:text-sm lg:text-base">✅ Safe & Protected Transactions</p>
+    </div>
+
+    <a href="/shop" class="bg-yellow-500 hover:bg-yellow-600 text-black 
+                           px-4 sm:px-6 py-1 sm:py-2 rounded-full 
+                           font-bold text-[9px] sm:text-sm 
+                           transition shadow-lg">
+      Explore
+    </a>
+
+  </div>
+</div>
+
+          <!-- Slide 3: Banner 5 - Special -->
+         <div class="banner-slide min-w-full h-full relative">
+  <img src="/uploads/banner/banner5.jpg" alt="Special" class="w-full h-full object-cover">
+
+  <!-- Top Left Button -->
+  <div class="absolute top-4 left-4 sm:top-6 sm:left-6">
+    <a href="/shop" 
+       class="bg-yellow-500 hover:bg-yellow-600 text-black 
+              px-4 sm:px-6 py-2 
+              rounded-full font-bold 
+              text-sm sm:text-base 
+              transition shadow-lg">
+      Let's Do Shopping 🛍️
+    </a>
+  </div>
+
+</div>
+
+        </div>
+
+        <!-- Slider Controls -->
+        <button class="absolute left-3 top-1/2 -translate-y-1/2 z-10 bg-black/50 hover:bg-black/75 text-white p-2 rounded transition" id="banner-prev">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+          </svg>
+        </button>
+        <button class="absolute right-3 top-1/2 -translate-y-1/2 z-10 bg-black/50 hover:bg-black/75 text-white p-2 rounded transition" id="banner-next">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+          </svg>
+        </button>
+
+        <!-- Slider Indicators -->
+        <div class="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-10">
+          <button class="slider-dot w-2.5 h-2.5 rounded-full bg-white/60 active" data-index="0"></button>
+          <button class="slider-dot w-2.5 h-2.5 rounded-full bg-white/60" data-index="1"></button>
+          <button class="slider-dot w-2.5 h-2.5 rounded-full bg-white/60" data-index="2"></button>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Main Content Container with All Sections -->
+    <div class="max-w-7xl mx-auto px-4 py-12 space-y-12">
+      
+      <!-- Shop by Category Posters Section -->
+      <section>
+        <div class="mb-8 sm:mb-10">
+          <h2 class="text-2xl sm:text-3xl font-bold text-gray-900">Shop by Category</h2>
+          <div class="h-1 w-20 bg-yellow-400 mt-2"></div>
+        </div>
+        
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
+          
+          <!-- Men's Clothing Poster -->
+          <div class="relative overflow-hidden rounded-lg shadow-lg">
+            <img src="/uploads/poster/poster1.png" alt="Men's Clothing" class="w-full h-56 sm:h-64 md:h-80 lg:h-96 object-cover">
+            <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent flex flex-col justify-end">
+              <div class="p-4 sm:p-6">
+                <h3 class="text-lg sm:text-xl font-bold text-white mb-2 sm:mb-3">Men's Clothing</h3>
+                <a href="/shop?gender=Men" class="inline-block bg-yellow-500 hover:bg-yellow-600 text-black px-4 sm:px-6 py-1.5 sm:py-2 rounded-full font-semibold text-sm sm:text-base">
+                  See More
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Women's Clothing Poster -->
+          <div class="relative overflow-hidden rounded-lg shadow-lg">
+            <img src="/uploads/poster/poster2.png" alt="Women's Clothing" class="w-full h-56 sm:h-64 md:h-80 lg:h-96 object-cover">
+            <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent flex flex-col justify-end">
+              <div class="p-4 sm:p-6">
+                <h3 class="text-lg sm:text-xl font-bold text-white mb-2 sm:mb-3">Women's Clothing</h3>
+                <a href="/shop?gender=Women" class="inline-block bg-yellow-500 hover:bg-yellow-600 text-black px-4 sm:px-6 py-1.5 sm:py-2 rounded-full font-semibold text-sm sm:text-base">
+                  See More
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Watches Poster -->
+          <div class="relative overflow-hidden rounded-lg shadow-lg">
+            <img src="/uploads/poster/poster3.png" alt="Watches" class="w-full h-56 sm:h-64 md:h-80 lg:h-96 object-cover">
+            <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent flex flex-col justify-end">
+              <div class="p-4 sm:p-6">
+                <h3 class="text-lg sm:text-xl font-bold text-white mb-2 sm:mb-3">Watches</h3>
+                <a href="/shop?category=Watches" class="inline-block bg-yellow-500 hover:bg-yellow-600 text-black px-4 sm:px-6 py-1.5 sm:py-2 rounded-full font-semibold text-sm sm:text-base">
+                  See More
+                </a>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+      
+      <!-- New Arrivals Section -->
+      <section>
+        <div class="flex items-center justify-between mb-10">
+          <div>
+            <h2 class="text-3xl font-bold text-gray-900">New Arrivals</h2>
+            <div class="h-1 w-20 bg-yellow-400 mt-2"></div>
+          </div>
+          <a href="/shop?sort=new" class="text-gray-600 hover:text-yellow-600 font-semibold flex items-center gap-1 transition">
+            View All <span>&rarr;</span>
+          </a>
+        </div>
+        
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+          <% newArrivals.forEach(product => { %>
+            <div class="flex flex-col bg-white rounded-2xl overflow-hidden shadow-sm">
+              <div class="h-64 relative overflow-hidden flex items-center justify-center p-8" style="background-color: <%= product.bgcolor %>;">
+                <img src="<%= product.image %>" alt="<%= product.name %>" class="h-full object-contain">
+                <% if(product.discount > 0) { %>
+                  <span class="absolute top-4 right-4 bg-yellow-500 text-black text-xs font-bold px-3 py-1 rounded-full">-<%= product.discount %>%</span>
+                <% } %>
+              </div>
+              <div class="flex-1 p-6" style="background-color: <%= product.panelcolor || '#ffffff' %>; color: <%= product.textcolor || '#1f2937' %>;">
+                <h3 class="font-bold mb-2 truncate" style="color: <%= product.textcolor || '#1f2937' %>;"><%= product.name %></h3>
+              </div>
+            </div>
+          <% }) %>
+        </div>
+      </section>
+
+      <!-- Join the Privilege Club Section -->
+      <section class="bg-gray-900 rounded-3xl p-12 relative overflow-hidden">
+        <div class="relative z-10 max-w-lg">
+          <span class="text-yellow-400 font-bold tracking-widest uppercase text-sm">Exclusive Offer</span>
+          <h2 class="text-4xl font-bold text-white mt-4 mb-6 leading-tight">Join the Scatch Privilege Club</h2>
+          <p class="text-gray-400 mb-2">✨ 15% Exclusive Discount on all purchases</p>
+          <p class="text-gray-400 mb-2">🚚 Free Shipping & Returns</p>
+          <p class="text-gray-400 mb-2">⏰ Early Access to Limited Editions</p>
+          <p class="text-gray-400 mb-8">⌚ Free Watch Servicing, Cleaning & Polishing + Extended 1-Year Warranty</p>
+          <button onclick="openPrivilegeModal()" class="bg-white text-black px-8 py-3 rounded-full font-bold hover:bg-yellow-400">
+            Join Now
+          </button>
+        </div>
+        <div class="absolute right-0 top-0 h-full w-1/2 opacity-20 hidden md:block">
+          <img src="https://images.unsplash.com/photo-1547996160-81dfa63595dd?auto=format&fit=crop&q=80&w=800" class="h-full w-full object-cover" alt="Promo">
+        </div>
+      </section>
+
+      <!-- Privilege Club Modal -->
+      <div id="privilegeModal" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+        <div class="bg-white rounded-lg p-8 max-w-md w-full mx-4">
+          <div class="flex justify-between items-center mb-6">
+            <h3 class="text-2xl font-bold text-gray-900">Join Privilege Club</h3>
+            <button onclick="closePrivilegeModal()" class="text-gray-500 hover:text-gray-700">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+          
+          <!-- Status Message -->
+          <div id="statusMessage" class="hidden mb-6 p-4 rounded-lg text-center font-semibold border-2"></div>
+          
+          <form id="privilegeForm" class="space-y-4">
+            <div>
+              <label class="block text-sm font-semibold text-gray-700 mb-2">Full Name</label>
+              <input type="text" name="fullname" placeholder="Enter your name" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-yellow-500">
+            </div>
+            
+            <div>
+              <label class="block text-sm font-semibold text-gray-700 mb-2">Email Address</label>
+              <input type="email" name="email" placeholder="Enter your email" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-yellow-500">
+            </div>
+            
+            <div>
+              <label class="block text-sm font-semibold text-gray-700 mb-2">Phone Number</label>
+              <input type="tel" name="phone" placeholder="Enter your phone number" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-yellow-500">
+            </div>
+            
+            <div class="flex items-center gap-2 pt-2">
+              <input type="checkbox" id="terms" required class="rounded">
+              <label for="terms" class="text-sm text-gray-600">I agree to receive exclusive offers and updates</label>
+            </div>
+            
+            <button type="submit" class="w-full bg-yellow-500 text-black font-semibold py-2 rounded-lg hover:bg-yellow-600">
+              Join Now
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Success Message Modal -->
+      <div id="successModal" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+        <div class="bg-white rounded-lg p-8 max-w-md w-full mx-4 text-center">
+          <div class="mb-4">
+            <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+              </svg>
+            </div>
+          </div>
+          <h2 class="text-2xl font-bold text-gray-900 mb-2">Welcome!</h2>
+          <p class="text-gray-600 mb-6">You are now a member of Scatch Privilege Club</p>
+          
+          <div class="bg-yellow-50 p-4 rounded-lg mb-6 text-left">
+            <p class="text-sm font-semibold text-gray-800 mb-3">Your Benefits:</p>
+            <ul class="text-sm text-gray-700 space-y-2">
+              <li>✨ 15% Exclusive Discount on all purchases</li>
+              <li>🚚 Free Shipping & Returns</li>
+              <li>⏰ Early Access to Limited Editions</li>
+              <li>⌚ Free Watch Servicing Once Per Year</li>
+              <li>⌚ Free Watch Cleaning & Polishing</li>
+              <li>⌚ Extended 1-Year Warranty</li>
+            </ul>
+          </div>
+          
+          <button onclick="closeSuccessModal()" class="w-full bg-yellow-500 text-black font-semibold py-2 rounded-lg hover:bg-yellow-600">
+            Done
+          </button>
+        </div>
+      </div>
+
+      <script>
+        function openPrivilegeModal() {
+          const modal = document.getElementById('privilegeModal');
+          const statusMessage = document.getElementById('statusMessage');
+          if (modal) {
+            if (statusMessage) {
+              statusMessage.classList.add('hidden');
+              statusMessage.textContent = '';
+            }
+            modal.classList.remove('hidden');
+          }
+        }
+        
+        function closePrivilegeModal() {
+          const modal = document.getElementById('privilegeModal');
+          if (modal) {
+            modal.classList.add('hidden');
+          }
+        }
+
+        function closeSuccessModal() {
+          const modal = document.getElementById('successModal');
+          if (modal) {
+            modal.classList.add('hidden');
+          }
+        }
+
+        function showStatusMessage(message, type) {
+          const statusMessage = document.getElementById('statusMessage');
+          if (statusMessage) {
+            statusMessage.textContent = message;
+            statusMessage.classList.remove('hidden', 'bg-red-100', 'bg-green-100', 'text-red-700', 'text-green-700', 'border-red-300', 'border-green-300');
+            if (type === 'error') {
+              statusMessage.classList.add('bg-red-100', 'text-red-700', 'border-red-300');
+            } else if (type === 'success') {
+              statusMessage.classList.add('bg-green-100', 'text-green-700', 'border-green-300');
+            }
+          }
+        }
+
+        // Handle form submission
+        document.addEventListener('DOMContentLoaded', function() {
+          const form = document.getElementById('privilegeForm');
+          const modal = document.getElementById('privilegeModal');
+          
+          if (form) {
+            form.addEventListener('submit', async function(e) {
+              e.preventDefault();
+              
+              const fullname = form.querySelector('input[name="fullname"]').value.trim();
+              const email = form.querySelector('input[name="email"]').value.trim();
+              const phone = form.querySelector('input[name="phone"]').value.trim();
+              const terms = document.getElementById('terms').checked;
+              
+              // Validation
+              if (!fullname) {
+                showStatusMessage('Please enter your full name', 'error');
+                return;
+              }
+              
+              if (!email) {
+                showStatusMessage('Please enter your email address', 'error');
+                return;
+              }
+              
+              if (!phone) {
+                showStatusMessage('Please enter your phone number', 'error');
+                return;
+              }
+              
+              if (!terms) {
+                showStatusMessage('Please agree to receive exclusive offers and updates', 'error');
+                return;
+              }
+              
+              // Show loading state
+              const submitBtn = form.querySelector('button[type="submit"]');
+              const originalText = submitBtn.textContent;
+              submitBtn.disabled = true;
+              submitBtn.textContent = 'Joining...';
+              
+              try {
+                const response = await fetch('/join-privilege-club', {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json',
+                  },
+                  body: JSON.stringify({
+                    fullname: fullname,
+                    email: email,
+                    phone: phone,
+                  }),
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                  form.reset();
+                  closePrivilegeModal();
+                  // Show success modal instead of alert
+                  const successModal = document.getElementById('successModal');
+                  if (successModal) {
+                    successModal.classList.remove('hidden');
+                  }
+                } else {
+                  showStatusMessage(data.message || 'Failed to join. Please try again.', 'error');
+                  // Scroll to message
+                  const statusMsg = document.getElementById('statusMessage');
+                  if (statusMsg) {
+                    statusMsg.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                  }
+                }
+              } catch (error) {
+                console.error('Error:', error);
+                showStatusMessage('Connection error. Please check your internet and try again.', 'error');
+              } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = originalText;
+              }
+            });
+          }
+          
+          // Close modal when clicking outside of it
+          if (modal) {
+            modal.addEventListener('click', function(e) {
+              if (e.target === modal) {
+                closePrivilegeModal();
+              }
+            });
+          }
+        });
+      </script>
+
+      <!-- Featured Promo Banner -->
+
+      <!-- Trending Now Slideshow (Women & Men) -->
+      <section>
+        <div class="flex items-center justify-between mb-10">
+          <div>
+            <h2 class="text-3xl font-bold text-gray-900">Trending Now</h2>
+            <div class="h-1 w-20 bg-yellow-400 mt-2"></div>
+          </div>
+          <a href="/shop" class="text-gray-600 hover:text-yellow-600 font-semibold flex items-center gap-1 transition">
+            Browse All <span>&rarr;</span>
+          </a>
+        </div>
+        
+        <!-- Slideshow Container -->
+        <div class="relative w-full overflow-hidden bg-gray-100 rounded-2xl">
+          <div class="relative h-48 sm:h-56 md:h-64">
+            <!-- Slideshow Track -->
+            <div class="trending-slider-track w-full h-full flex transition-transform duration-500">
+              <!-- Slide 1: Women's Products (3 images) -->
+              <div class="trending-slide min-w-full h-full grid grid-cols-3 gap-2 sm:gap-4 p-3 sm:p-4">
+                <% womenProducts.slice(0, 3).forEach(product => { %>
+                  <div class="flex items-center justify-center rounded-lg overflow-hidden" style="background-color: <%= product.bgcolor %>;">
+                    <img src="<%= product.image %>" alt="<%= product.name %>" class="h-full w-full object-contain">
+                  </div>
+                <% }) %>
+              </div>
+
+              <!-- Slide 2: Men's Products (3 images) -->
+              <div class="trending-slide min-w-full h-full grid grid-cols-3 gap-2 sm:gap-4 p-3 sm:p-4">
+                <% menProducts.slice(0, 3).forEach(product => { %>
+                  <div class="flex items-center justify-center rounded-lg overflow-hidden" style="background-color: <%= product.bgcolor %>;">
+                    <img src="<%= product.image %>" alt="<%= product.name %>" class="h-full w-full object-contain">
+                  </div>
+                <% }) %>
+              </div>
+
+              <!-- Slide 3: Men's Products (3 images) -->
+              <div class="trending-slide min-w-full h-full grid grid-cols-3 gap-2 sm:gap-4 p-3 sm:p-4">
+                <% menProducts.slice(3, 6).forEach(product => { %>
+                  <div class="flex items-center justify-center rounded-lg overflow-hidden" style="background-color: <%= product.bgcolor %>;">
+                    <img src="<%= product.image %>" alt="<%= product.name %>" class="h-full w-full object-contain">
+                  </div>
+                <% }) %>
+              </div>
+
+              <!-- Slide 4: Men's Products (3 images) -->
+              <div class="trending-slide min-w-full h-full grid grid-cols-3 gap-2 sm:gap-4 p-3 sm:p-4">
+                <% menProducts.slice(6, 9).forEach(product => { %>
+                  <div class="flex items-center justify-center rounded-lg overflow-hidden" style="background-color: <%= product.bgcolor %>;">
+                    <img src="<%= product.image %>" alt="<%= product.name %>" class="h-full w-full object-contain">
+                  </div>
+                <% }) %>
+              </div>
+            </div>
+
+            <!-- Slideshow Controls -->
+            <button class="absolute left-2 top-1/2 -translate-y-1/2 z-10 bg-black/50 hover:bg-black/75 text-white p-2 rounded transition" id="trending-prev">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+              </svg>
+            </button>
+            <button class="absolute right-2 top-1/2 -translate-y-1/2 z-10 bg-black/50 hover:bg-black/75 text-white p-2 rounded transition" id="trending-next">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+              </svg>
+            </button>
+
+            <!-- Slideshow Indicators -->
+            <div class="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5 z-10">
+              <button class="trending-dot w-2 h-2 rounded-full bg-white/60 active" data-index="0"></button>
+              <button class="trending-dot w-2 h-2 rounded-full bg-white/60" data-index="1"></button>
+              <button class="trending-dot w-2 h-2 rounded-full bg-white/60" data-index="2"></button>
+              <button class="trending-dot w-2 h-2 rounded-full bg-white/60" data-index="3"></button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <script>
+        // Trending Slideshow - Multiple slides with 3 images each
+        let trendingCurrentIndex = 0;
+        const trendingSlides = document.querySelectorAll('.trending-slide');
+        const trendingDots = document.querySelectorAll('.trending-dot');
+        const trendingTrack = document.querySelector('.trending-slider-track');
+
+        function updateTrendingSlider() {
+          if (trendingSlides.length === 0) return;
+          
+          const offset = -trendingCurrentIndex * 100;
+          trendingTrack.style.transform = `translateX(${offset}%)`;
+
+          trendingDots.forEach((dot, index) => {
+            if (index === trendingCurrentIndex) {
+              dot.classList.add('active');
+              dot.style.backgroundColor = '#ffffff';
+            } else {
+              dot.classList.remove('active');
+              dot.style.backgroundColor = 'rgba(255, 255, 255, 0.6)';
+            }
+          });
+        }
+
+        document.getElementById('trending-prev')?.addEventListener('click', () => {
+          trendingCurrentIndex = (trendingCurrentIndex - 1 + trendingSlides.length) % trendingSlides.length;
+          updateTrendingSlider();
+        });
+
+        document.getElementById('trending-next')?.addEventListener('click', () => {
+          trendingCurrentIndex = (trendingCurrentIndex + 1) % trendingSlides.length;
+          updateTrendingSlider();
+        });
+
+        trendingDots.forEach(dot => {
+          dot.addEventListener('click', () => {
+            trendingCurrentIndex = parseInt(dot.getAttribute('data-index'));
+            updateTrendingSlider();
+          });
+        });
+
+        // Auto-slide every 6 seconds
+        setInterval(() => {
+          trendingCurrentIndex = (trendingCurrentIndex + 1) % trendingSlides.length;
+          updateTrendingSlider();
+        }, 6000);
+      </script>
+
+      <!-- Footer Link to Shop -->
+      <section class="bg-white py-6 text-center rounded-lg">
+        <h2 class="text-3xl font-bold mb-4">Didn't find what you're looking for?</h2>
+        <a href="/shop" class="inline-block border-b-2 border-yellow-400 text-xl font-bold pb-1 hover:text-yellow-600 transition">
+          View Entire Collection
+        </a>
+      </section>
+
+    </div>
+
+    <!-- Footer -->
+    <%-include('./partials/footer') %>
+  </div>
+
+<% } else { %>
+  <!-- Guest/Landing Page Layout (Keep original) -->
+  <div class="min-h-screen grid md:grid-cols-2 font-sans">
+    <div class="relative bg-gradient-to-tr from-gray-900 to-gray-800 text-white p-10 flex flex-col justify-center">
+      <div class="max-w-md mx-auto">
+        <h1 class="text-5xl font-extrabold mb-4 leading-tight text-yellow-400">
+          Welcome to <span class="text-white">Scatch</span>
+        </h1>
+        <p class="text-lg font-light mb-6 text-gray-200">
+          Discover premium men's & women's clothing and luxury watches curated just for you.
+        </p>
+        <ul class="space-y-2 text-sm text-gray-300">
+          <li class="flex items-center gap-2">� Men's & Women's Fashion Collections</li>
+          <li class="flex items-center gap-2">🔒 100% secure checkout</li>
+          <li class="flex items-center gap-2">💬 Friendly support 24/7</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="flex items-center justify-center px-8 py-16">
+        <div class="w-full max-w-md space-y-12">
+        <!-- Forms go here -->
+        <div>
+          <div id="toast-container" class="py-2 text-center mb-6 rounded-full"></div>
+          
+          <% if (typeof registerError !== "undefined" && registerError.length > 0) { %>
+            <div class="mb-4 p-3 bg-orange-50 border border-orange-200 text-orange-700 text-sm rounded-lg animate-fade-in">
+              <%= registerError[0] %>
+            </div>
+          <% } %>
+
+          <h2 class="text-2xl font-semibold text-gray-800 mb-6">Create your Scatch account</h2>
+          <form action="/users/register" method="POST" class="space-y-4" autocomplete="off">
+            <input type="text" name="fullname" placeholder="Full Name" class="w-full px-4 py-2 border rounded-md" required />
+            <input type="email" name="email" placeholder="Email" class="w-full px-4 py-2 border rounded-md" required />
+            <input type="password" name="password" placeholder="Password" class="w-full px-4 py-2 border rounded-md" required />
+            <input type="submit" value="Sign Up" class="w-full bg-yellow-500 hover:bg-yellow-600 text-white py-3 rounded-full font-semibold cursor-pointer" />
+          </form>
+        </div>
+
+        <div class="flex items-center justify-between">
+          <hr class="w-full border-gray-300" />
+          <span class="px-3 text-gray-400">OR</span>
+          <hr class="w-full border-gray-300" />
+        </div>
+
+        <div>
+          <% if (typeof loginError !== "undefined" && loginError.length > 0) { %>
+            <div class="mb-4 p-3 bg-orange-50 border border-orange-200 text-orange-700 text-sm rounded-lg animate-fade-in">
+              <%= loginError[0] %>
+            </div>
+          <% } %>
+
+          <h2 class="text-2xl font-semibold text-gray-800 mb-6">Already have an account?</h2>
+          <form action="/users/login" method="POST" class="space-y-4">
+            <input type="email" name="email" placeholder="Email" class="w-full px-4 py-2 border rounded-md" required />
+            <input type="password" name="password" placeholder="Password" class="w-full px-4 py-2 border rounded-md" required />
+            <input type="submit" value="Login" class="w-full bg-gray-800 hover:bg-black text-white py-3 rounded-full font-semibold cursor-pointer" />
+          </form>
+          <p class="text-center text-gray-600 text-sm mt-4">
+            Or login as <a href="/owners/login" class="text-blue-600 hover:text-blue-700 font-medium">Store Owner</a>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+<% } %>
+
+<script>
+  function createToast(message, type="success"){
+    const toast=document.createElement("div");
+    toast.textContent=message;
+    toast.className=`px-4 py-2 rounded shadow-lg text-white ${type==="success"? "bg-green-600" : "bg-red-600"} animate-slide-in`;
+    const container=document.getElementById("toast-container");
+    if(container) container.appendChild(toast);
+    setTimeout(()=>{
+      toast.classList.add("animate-fade-out");
+      setTimeout(()=> toast.remove(), 500);
+    },3000);
+  }
+
+  document.addEventListener("DOMContentLoaded", () => {
+     <% if (typeof success !== "undefined" && success.length > 0) { %>
+        createToast("<%= success[0] %>", "success");
+     <% } %>
+
+     // Banner Slider functionality
+     let currentSlide = 0;
+     const sliderTrack = document.querySelector('.banner-slider-track');
+     const slides = document.querySelectorAll('.banner-slide');
+     const dots = document.querySelectorAll('.slider-dot');
+     const totalSlides = slides.length;
+
+     function goToSlide(index) {
+       currentSlide = index;
+       if (sliderTrack) {
+         sliderTrack.style.transform = `translateX(-${currentSlide * 100}%)`;
+       }
+       
+       // Update dots
+       dots.forEach((dot, i) => {
+         dot.classList.toggle('bg-white', i === currentSlide);
+         dot.classList.toggle('bg-white/60', i !== currentSlide);
+       });
+     }
+
+     function nextSlide() {
+       currentSlide = (currentSlide + 1) % totalSlides;
+       goToSlide(currentSlide);
+     }
+
+     function prevSlide() {
+       currentSlide = (currentSlide - 1 + totalSlides) % totalSlides;
+       goToSlide(currentSlide);
+     }
+
+     // Auto-play slider every 5 seconds
+     let autoSlideInterval = setInterval(nextSlide, 5000);
+
+     const resetAutoSlide = () => {
+       clearInterval(autoSlideInterval);
+       autoSlideInterval = setInterval(nextSlide, 5000);
+     };
+
+     // Event listeners
+     document.getElementById('banner-next')?.addEventListener('click', () => {
+       nextSlide();
+       resetAutoSlide();
+     });
+
+     document.getElementById('banner-prev')?.addEventListener('click', () => {
+       prevSlide();
+       resetAutoSlide();
+     });
+
+     dots.forEach(dot => {
+       dot.addEventListener('click', (e) => {
+         goToSlide(parseInt(e.target.dataset.index));
+         resetAutoSlide();
+       });
+     });
+
+     // Initialize
+     goToSlide(0);
+  });
+</script>
+</body>
+</html>

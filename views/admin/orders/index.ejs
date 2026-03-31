@@ -1,0 +1,130 @@
+<%- include('../../adminpartials/header') %>
+
+<div class="max-w-7xl mx-auto px-6 lg:px-16 pb-10">
+    <h1 class="text-2xl font-bold mb-6 text-gray-800">Manage Orders</h1>
+
+    <% if (success && success.length > 0) { %>
+        <div class="fixed top-24 right-4 sm:right-auto sm:left-1/2 sm:-translate-x-1/2 z-50 bg-yellow-500 text-gray-900 px-3 sm:px-5 py-1.5 sm:py-2 rounded shadow-lg max-w-xs flex items-center justify-between gap-2">
+            <span class="text-xs sm:text-sm font-semibold flex-1"><%= success %></span>
+            <button type="button" onclick="this.parentElement.remove()" class="text-gray-900 hover:text-gray-700 font-bold text-lg shrink-0 ml-1">&times;</button>
+        </div>
+    <% } %>
+
+    <% if (error && error.length > 0) { %>
+        <div class="fixed top-24 right-4 sm:right-auto sm:left-1/2 sm:-translate-x-1/2 z-50 bg-yellow-500 text-gray-900 px-3 sm:px-5 py-1.5 sm:py-2 rounded shadow-lg max-w-xs flex items-center justify-between gap-2">
+            <span class="text-xs sm:text-sm font-semibold flex-1"><%= error %></span>
+            <button type="button" onclick="this.parentElement.remove()" class="text-gray-900 hover:text-gray-700 font-bold text-lg shrink-0 ml-1">&times;</button>
+        </div>
+    <% } %>
+
+    <div class="space-y-8">
+        <% if (ordersByUser.length > 0) { %>
+            <% ordersByUser.forEach(function(userOrderGroup) { %>
+                <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                    <div class="bg-gray-50 px-6 py-4 border-b border-gray-200">
+                        <h2 class="text-lg font-semibold text-gray-800">
+                            Customer: <%= userOrderGroup.user.fullname %>
+                            <span class="text-sm text-gray-500 font-normal ml-2">(<%= userOrderGroup.user.email %>)</span>
+                        </h2>
+                    </div>
+                    <div class="p-6">
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full divide-y divide-gray-200">
+                                <thead>
+                                    <tr>
+                                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Order ID</th>
+                                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Products</th>
+                                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Total</th>
+                                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Payment</th>
+                                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Paid Amt</th>
+                                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
+                                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+                                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-gray-200">
+                                    <% userOrderGroup.orders.forEach(function(order) { %>
+                                        <tr>
+                                            <td class="px-4 py-2 whitespace-nowrap text-sm text-gray-600">
+                                                <%= order._id %>
+                                            </td>
+                                            <td class="px-4 py-3 text-sm text-gray-600">
+                                                <% order.products.forEach(function(item) { %>
+                                                    <div class="flex items-center gap-3 mb-2">
+                                                        <% if(item.product) { %>
+                                                            <img src="<%= item.product.image %>" alt="<%= item.product.name %>" class="w-12 h-12 object-contain rounded border bg-gray-50 flex-shrink-0" />
+                                                            <div>
+                                                                <p class="font-medium text-gray-800"><%= item.product.name %></p>
+                                                                <p class="text-xs text-gray-500">Qty: <%= item.quantity %></p>
+                                                            </div>
+                                                        <% } else { %>
+                                                            <div class="w-12 h-12 rounded border bg-gray-100 flex items-center justify-center text-xs text-gray-400 flex-shrink-0">N/A</div>
+                                                            <div>
+                                                                <p class="font-medium text-gray-400 italic">Product Deleted</p>
+                                                                <p class="text-xs text-gray-400">Qty: <%= item.quantity %></p>
+                                                            </div>
+                                                        <% } %>
+                                                    </div>
+                                                <% }); %>
+                                            </td>
+                                            <td class="px-4 py-2 whitespace-nowrap text-sm font-medium text-gray-900">
+                                                ₹ <%= order.totalAmount %>
+                                            </td>
+                                            <td class="px-4 py-2 whitespace-nowrap">
+                                                <div class="text-xs">
+                                                    <p class="font-medium"><%= order.paymentMethod || 'N/A' %></p>
+                                                    <span class="px-2 py-1 inline-flex text-xs font-semibold rounded
+                                                        <%= order.paymentStatus === 'Completed' ? 'bg-green-100 text-green-800' :
+                                                           order.paymentStatus === 'Pending' ? 'bg-yellow-100 text-yellow-800' :
+                                                           'bg-red-100 text-red-800' %>">
+                                                        <%= order.paymentStatus %>
+                                                    </span>
+                                                </div>
+                                            </td>
+                                            <td class="px-4 py-2 whitespace-nowrap text-sm text-gray-600">
+                                                <% if(order.paymentStatus === 'Completed') { %>
+                                                    ₹ <%= order.paidAmount || order.totalAmount %>
+                                                <% } else { %>
+                                                    -
+                                                <% } %>
+                                            </td>
+                                            <td class="px-4 py-2 whitespace-nowrap text-sm text-gray-600">
+                                                <%= new Date(order.createdAt).toLocaleDateString() %>
+                                            </td>
+                                            <td class="px-4 py-2 whitespace-nowrap">
+                                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
+                                                    <%= order.status === 'Delivered' ? 'bg-green-100 text-green-800' :
+                                                       order.status === 'Cancelled' ? 'bg-red-100 text-red-800' :
+                                                       order.status === 'Shipped' ? 'bg-blue-100 text-blue-800' :
+                                                       'bg-yellow-100 text-yellow-800' %>">
+                                                    <%= order.status %>
+                                                </span>
+                                            </td>
+                                            <td class="px-4 py-2 whitespace-nowrap text-sm text-gray-600">
+                                                <form action="/admin/orders/<%= order._id %>/status" method="post" class="flex items-center space-x-2">
+                                                    <select name="status" class="border border-gray-300 rounded text-sm p-1 focus:ring-blue-500 focus:border-blue-500">
+                                                        <option value="Placed" <%= order.status === 'Placed' ? 'selected' : '' %>>Placed</option>
+                                                        <option value="Shipped" <%= order.status === 'Shipped' ? 'selected' : '' %>>Shipped</option>
+                                                        <option value="Delivered" <%= order.status === 'Delivered' ? 'selected' : '' %>>Delivered</option>
+                                                        <option value="Cancelled" <%= order.status === 'Cancelled' ? 'selected' : '' %>>Cancelled</option>
+                                                    </select>
+                                                    <button type="submit" class="text-blue-600 hover:text-blue-900">Update</button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                    <% }); %>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            <% }); %>
+        <% } else { %>
+            <div class="text-center py-10 bg-white rounded-lg shadow">
+                <p class="text-gray-500">No orders found.</p>
+            </div>
+        <% } %>
+    </div>
+</div>
+
+<%- include('../../adminpartials/footer') %>

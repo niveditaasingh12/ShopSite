@@ -1,0 +1,62 @@
+<%- include('../../adminpartials/header') %>
+
+<div class="max-w-3xl mx-auto px-6 lg:px-16 pb-10">
+    <h2 class="text-2xl font-bold mb-6 text-gray-800">Create Owner Account</h2>
+
+    <% if (success && success.length > 0) { %>
+        <div class="fixed top-24 right-4 sm:right-auto sm:left-1/2 sm:-translate-x-1/2 z-50 bg-yellow-500 text-gray-900 px-3 sm:px-5 py-1.5 sm:py-2 rounded shadow-lg max-w-xs flex items-center justify-between gap-2">
+            <span class="text-xs sm:text-sm font-semibold flex-1"><%= success %></span>
+            <button type="button" onclick="this.parentElement.remove()" class="text-gray-900 hover:text-gray-700 font-bold text-lg shrink-0 ml-1">&times;</button>
+        </div>
+    <% } %>
+
+    <% if (error && error.length > 0) { %>
+        <div class="fixed top-24 right-4 sm:right-auto sm:left-1/2 sm:-translate-x-1/2 z-50 bg-yellow-500 text-gray-900 px-3 sm:px-5 py-1.5 sm:py-2 rounded shadow-lg max-w-xs flex items-center justify-between gap-2">
+            <span class="text-xs sm:text-sm font-semibold flex-1"><%= error %></span>
+            <button type="button" onclick="this.parentElement.remove()" class="text-gray-900 hover:text-gray-700 font-bold text-lg shrink-0 ml-1">&times;</button>
+        </div>
+    <% } %>
+
+    <div class="bg-white rounded-lg shadow-lg p-8">
+        <form action="/admin/owners" method="post" class="space-y-6">
+            <div>
+                <label class="block mb-2 text-sm font-medium text-gray-700">Full Name</label>
+                <input name="fullname" type="text" placeholder="Owner full name"
+                    class="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-500 outline-none" />
+            </div>
+
+            <div>
+                <label class="block mb-2 text-sm font-medium text-gray-700">Email</label>
+                <input name="email" type="email" placeholder="owner@example.com"
+                    class="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-500 outline-none" />
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label class="block mb-2 text-sm font-medium text-gray-700">Password</label>
+                    <input name="password" type="password" placeholder="Password"
+                        class="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-500 outline-none" />
+                </div>
+                <div>
+                    <label class="block mb-2 text-sm font-medium text-gray-700">Confirm Password</label>
+                    <input name="confirmPassword" type="password" placeholder="Confirm password"
+                        class="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-500 outline-none" />
+                </div>
+            </div>
+
+            <div class="flex items-center">
+                <input id="is_admin" name="is_admin" type="checkbox" class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
+                <label for="is_admin" class="ml-2 block text-sm text-gray-700">Grant admin rights</label>
+            </div>
+
+            <div class="pt-4">
+                <button type="submit"
+                    class="bg-blue-600 hover:bg-blue-700 transition text-white px-6 py-2 rounded-md font-medium w-full md:w-auto">
+                    Create Owner
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<%- include('../../adminpartials/footer') %>

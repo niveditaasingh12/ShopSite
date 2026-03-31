@@ -1,0 +1,425 @@
+<%- include('./partials/header') %>
+
+<% if (success.length > 0) { %>
+<div id="flash-msg" class="fixed top-24 right-4 sm:right-auto sm:left-1/2 sm:-translate-x-1/2 z-50 bg-yellow-500 text-gray-900 px-3 sm:px-5 py-1.5 sm:py-2 rounded shadow-lg max-w-xs flex items-center justify-between gap-2">
+  <span class="text-xs sm:text-sm font-semibold flex-1"><%= success %></span>
+  <button onclick="this.parentElement.remove()" class="text-gray-900 hover:text-gray-700 font-bold text-lg shrink-0 ml-1">&times;</button>
+</div>
+<% } %>
+
+<% if (error && error.length > 0) { %>
+<div id="flash-error" class="fixed top-24 right-4 sm:right-auto sm:left-1/2 sm:-translate-x-1/2 z-50 bg-yellow-500 text-gray-900 px-3 sm:px-5 py-1.5 sm:py-2 rounded shadow-lg max-w-xs flex items-center justify-between gap-2">
+  <span class="text-xs sm:text-sm font-semibold flex-1"><%= error %></span>
+  <button onclick="this.parentElement.remove()" class="text-gray-900 hover:text-gray-700 font-bold text-lg shrink-0 ml-1">&times;</button>
+</div>
+<% } %>
+
+<!-- Mobile Filter Drawer Overlay -->
+<div id="filter-overlay" onclick="closeFilters()" class="fixed inset-0 bg-black/50 z-40 hidden lg:hidden"></div>
+
+<!-- Mobile Filter Drawer -->
+<div id="filter-drawer" class="fixed top-0 left-0 h-full w-72 bg-white z-50 shadow-2xl transform -translate-x-full lg:hidden overflow-y-auto">
+  <div class="flex items-center justify-between px-5 py-4 border-b border-gray-200 sticky top-0 bg-white">
+    <h2 class="text-lg font-bold text-gray-900">Filters</h2>
+    <button onclick="closeFilters()" class="text-gray-500 text-2xl hover:text-gray-700">&times;</button>
+  </div>
+  
+  <div class="py-4">
+    <!-- Gender -->
+    <div class="px-5 py-3 border-b border-gray-200">
+      <h3 class="text-sm font-semibold text-gray-800 mb-2">Gender</h3>
+      <div class="flex flex-col space-y-1">
+        <a href="/shop" class="sidebar-link <%= !gender ? 'active' : '' %>">All</a>
+        <a href="/shop?gender=Men" onclick="updateCategories('Men')" class="sidebar-link <%= gender === 'Men' ? 'active' : '' %>">Men</a>
+        <a href="/shop?gender=Women" onclick="updateCategories('Women')" class="sidebar-link <%= gender === 'Women' ? 'active' : '' %>">Women</a>
+      </div>
+    </div>
+
+    <!-- Categories -->
+    <div class="px-5 py-3 border-b border-gray-200">
+      <h3 class="text-sm font-semibold text-gray-800 mb-2">Category</h3>
+      <div id="category-list-mobile" class="flex flex-col space-y-1">
+        <!-- JS populated -->
+      </div>
+    </div>
+
+    <!-- Sort -->
+    <div class="px-5 py-3 border-b border-gray-200">
+      <h3 class="text-sm font-semibold text-gray-800 mb-2">Sort By</h3>
+      <form method="GET" action="/shop">
+        <% if (gender) { %><input type="hidden" name="gender" value="<%= gender %>"><% } %>
+        <% if (category) { %><input type="hidden" name="category" value="<%= category %>"><% } %>
+        <% if (filter) { %><input type="hidden" name="filter" value="<%= filter %>"><% } %>
+        <select name="sort" onchange="this.form.submit()" class="w-full text-sm border border-gray-300 px-2 py-1.5 bg-white text-gray-700 focus:outline-none focus:border-yellow-500 rounded">
+          <option value="popular" <%= sort === 'popular' ? 'selected' : '' %>>Popular</option>
+          <option value="new" <%= sort === 'new' ? 'selected' : '' %>>Newest</option>
+          <option value="priceLowHigh" <%= sort === 'priceLowHigh' ? 'selected' : '' %>>Price: Low to High</option>
+          <option value="priceHighLow" <%= sort === 'priceHighLow' ? 'selected' : '' %>>Price: High to Low</option>
+        </select>
+      </form>
+    </div>
+
+    <!-- Offers -->
+    <div class="px-5 py-3">
+      <h3 class="text-sm font-semibold text-gray-800 mb-2">Offers</h3>
+      <div class="flex flex-col space-y-1">
+        <a href="/shop<%= gender ? '?gender=' + gender : '' %>" class="sidebar-link <%= !filter ? 'active' : '' %>">All Products</a>
+        <a href="/shop?<%= gender ? 'gender=' + gender + '&' : '' %>filter=discounted" class="sidebar-link <%= filter === 'discounted' ? 'active' : '' %>">Discounted</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="min-h-screen bg-gray-50 font-sans">
+
+  <!-- Breadcrumb and Filter Bar -->
+  <div class="bg-white border-b border-gray-100">
+    <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-10 py-4">
+      
+      <div class="flex items-center justify-between mb-3">
+        <!-- Breadcrumb -->
+        <nav class="text-xs text-gray-400">
+          <a href="/" class="hover:text-yellow-500 transition">Home</a>
+          <span class="mx-1">/</span>
+          <span class="text-gray-600 font-medium"><%= gender || 'Shop' %></span>
+          <% if (category) { %><span class="mx-1">/</span><span class="text-gray-800 font-semibold"><%= category %></span><% } %>
+        </nav>
+
+        <!-- Mobile filter button -->
+        <button onclick="openFilters()" class="lg:hidden flex items-center gap-2 bg-gray-900 text-white text-sm px-4 py-2 rounded-lg hover:bg-gray-700 transition">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4h18M6 10h12M10 16h4"/></svg>
+          Filters
+        </button>
+      </div>
+
+      <!-- Title -->
+      <div>
+        <h1 class="text-lg sm:text-xl font-bold text-gray-900">
+          <%= gender ? gender + "'s " : '' %><%= category || 'All Products' %>
+          <span class="text-gray-400 text-sm font-normal ml-1">(<%= products.length %>)</span>
+        </h1>
+      </div>
+
+      <!-- Active filter chips -->
+      <% if (gender || category || filter) { %>
+      <div class="mt-3 flex flex-wrap gap-2">
+        <% if (gender) { %>
+        <a href="/shop<%= category ? '?category=' + category : '' %>" class="inline-flex items-center gap-1.5 bg-yellow-100 text-yellow-800 text-xs font-semibold px-3 py-1 rounded-full hover:bg-yellow-200 transition">
+          <%= gender %>
+          <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"/></svg>
+        </a>
+        <% } %>
+        <% if (category) { %>
+        <a href="/shop<%= gender ? '?gender=' + gender : '' %>" class="inline-flex items-center gap-1.5 bg-gray-900 text-white text-xs font-semibold px-3 py-1 rounded-full hover:bg-gray-700 transition">
+          <%= category %>
+          <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"/></svg>
+        </a>
+        <% } %>
+        <% if (filter === 'discounted') { %>
+        <a href="/shop<%= gender ? '?gender=' + gender : '' %>" class="inline-flex items-center gap-1.5 bg-green-100 text-green-800 text-xs font-semibold px-3 py-1 rounded-full hover:bg-green-200 transition">
+          Discounted
+          <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"/></svg>
+        </a>
+        <% } %>
+        <a href="/shop" class="inline-flex items-center text-xs text-gray-400 hover:text-red-500 transition px-1 py-1">Clear all</a>
+      </div>
+      <% } %>
+    </div>
+  </div>
+
+  <!-- Main layout -->
+  <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-10 py-6 flex gap-8">
+
+    <!-- Desktop Sidebar -->
+    <aside class="hidden lg:block w-56 shrink-0">
+      <div class="sticky top-20 bg-white shadow-sm border border-gray-200 max-h-[calc(100vh-6rem)] overflow-y-auto">
+
+        <!-- Gender -->
+        <div class="px-3 py-1.5 border-b border-gray-200">
+          <h3 class="text-base font-semibold text-gray-800 mb-1">Gender</h3>
+          <div class="flex flex-col">
+            <a href="/shop" class="sidebar-link <%= !gender ? 'active' : '' %>">All</a>
+            <a href="/shop?gender=Men" onclick="updateCategories('Men')" class="sidebar-link <%= gender === 'Men' ? 'active' : '' %>">Men</a>
+            <a href="/shop?gender=Women" onclick="updateCategories('Women')" class="sidebar-link <%= gender === 'Women' ? 'active' : '' %>">Women</a>
+          </div>
+        </div>
+
+        <!-- Categories -->
+        <div class="px-3 py-1.5 border-b border-gray-200">
+          <h3 class="text-base font-semibold text-gray-800 mb-1">Category</h3>
+          <div id="category-list" class="flex flex-col">
+            <!-- JS populated -->
+          </div>
+        </div>
+
+        <!-- Sort -->
+        <div class="px-3 py-2.5 border-b border-gray-200">
+          <h3 class="text-base font-semibold text-gray-800 mb-1">Sort By</h3>
+          <form method="GET" action="/shop">
+            <% if (gender) { %><input type="hidden" name="gender" value="<%= gender %>"><% } %>
+            <% if (category) { %><input type="hidden" name="category" value="<%= category %>"><% } %>
+            <% if (filter) { %><input type="hidden" name="filter" value="<%= filter %>"><% } %>
+            <select name="sort" onchange="this.form.submit()" class="w-full text-sm border border-gray-300 px-2 py-1 bg-white text-gray-700 focus:outline-none focus:border-yellow-500">
+              <option value="popular" <%= sort === 'popular' ? 'selected' : '' %>>Popular</option>
+              <option value="new" <%= sort === 'new' ? 'selected' : '' %>>Newest</option>
+              <option value="priceLowHigh" <%= sort === 'priceLowHigh' ? 'selected' : '' %>>Price: Low to High</option>
+              <option value="priceHighLow" <%= sort === 'priceHighLow' ? 'selected' : '' %>>Price: High to Low</option>
+            </select>
+          </form>
+        </div>
+
+        <!-- Filters -->
+        <div class="px-3 py-1.5">
+          <h3 class="text-base font-semibold text-gray-800 mb-1">Offers</h3>
+          <div class="flex flex-col">
+            <a href="/shop<%= gender ? '?gender=' + gender : '' %>" class="sidebar-link <%= !filter ? 'active' : '' %>">All Products</a>
+            <a href="/shop?<%= gender ? 'gender=' + gender + '&' : '' %>filter=discounted" class="sidebar-link <%= filter === 'discounted' ? 'active' : '' %>">Discounted</a>
+          </div>
+        </div>
+
+      </div>
+    </aside>
+
+    <!-- Products Grid -->
+    <main class="flex-1 min-w-0">
+      <% if (products.length === 0) { %>
+      <!-- Empty state -->
+      <div class="flex flex-col items-center justify-center py-24 text-center">
+        <div class="text-6xl mb-4">🛍️</div>
+        <h2 class="text-xl font-bold text-gray-700 mb-2">No products found</h2>
+        <p class="text-gray-400 text-sm mb-6">Try changing the filters or browse all products.</p>
+        <a href="/shop" class="bg-gray-900 text-white px-6 py-2.5 rounded-full text-sm font-medium hover:bg-yellow-500 hover:text-black transition">Browse All</a>
+      </div>
+      <% } else { %>
+      <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-3 gap-3 sm:gap-5">
+        <% products.forEach(function(product) { %>
+        <div class="flex flex-col bg-white overflow-hidden shadow-sm border border-gray-200">
+
+          <!-- Image area -->
+          <div class="relative overflow-hidden" style="background-color: #ffffff;">
+            <% if (product.image) { %>
+            <img class="w-full h-48 sm:h-56 object-contain p-3"
+                 src="<%= product.image %>" alt="<%= product.name %>">
+            <% } else { %>
+            <div class="w-full h-48 sm:h-56 flex items-center justify-center text-gray-300 text-sm">No image</div>
+            <% } %>
+          </div>
+
+          <!-- Info panel -->
+          <div class="flex flex-col flex-1 p-3 sm:p-4" style="background-color: #efe9e3; color: #000000;">
+            <p class="text-[10px] sm:text-xs font-semibold uppercase tracking-wider opacity-50 mb-0.5"><%= product.category || '' %></p>
+            <h3 class="text-sm sm:text-base font-bold leading-snug line-clamp-2 mb-2"><%= product.name %></h3>
+
+            <!-- Price row -->
+            <div class="flex items-center gap-2 mt-auto mb-3">
+              <% 
+                var finalPrice = product.price;
+                var hasValidDiscount = product.discount > 0 && product.discount < 100;
+                if (hasValidDiscount) {
+                  finalPrice = Math.round(product.price * (1 - product.discount / 100));
+                }
+              %>
+              <span class="text-base sm:text-lg font-semibold">₹<%= finalPrice %></span>
+              <% if (hasValidDiscount) { %>
+              <span class="text-xs line-through opacity-50">₹<%= product.price %></span>
+              <span class="text-xs font-bold text-green-600"><%= product.discount %>% off</span>
+              <% } %>
+            </div>
+
+            <% const clothingCategories = ['T-Shirt', 'Shirt', 'Jeans', 'Tops', 'Tees', 'Bottom', 'Dress']; %>
+            <% const isClothing = clothingCategories.includes(product.category); %>
+
+            <% if (isClothing) { %>
+              <div class="mb-3">
+                <label for="size-<%= product._id %>" class="block text-xs font-medium text-gray-700 mb-1">Select Size</label>
+                <select id="size-<%= product._id %>" name="size" class="w-full border border-gray-300 rounded px-2 py-1 text-sm" required>
+                  <option value="">Choose size</option>
+                  <option value="XS">XS</option>
+                  <option value="S">S</option>
+                  <option value="M">M</option>
+                  <option value="L">L</option>
+                  <option value="XL">XL</option>
+                  <option value="XXL">XXL</option>
+                </select>
+              </div>
+            <% } %>
+
+            <!-- Action buttons -->
+            <div class="flex gap-2">
+              <form action="/addtocart/<%= product._id %>" method="GET" class="flex-1">
+                <% if (isClothing) { %>
+                  <input type="hidden" name="size" class="size-input" data-size-for="size-<%= product._id %>">
+                <% } %>
+                <button type="submit" class="w-full text-center text-xs sm:text-sm font-semibold py-2 bg-gray-800 text-white hover:bg-gray-900 rounded">
+                  Add to Cart
+                </button>
+              </form>
+
+              <form action="/buynow/<%= product._id %>" method="GET" class="flex-1">
+                <% if (isClothing) { %>
+                  <input type="hidden" name="size" class="size-input" data-size-for="size-<%= product._id %>">
+                <% } %>
+                <button type="submit" class="w-full text-center text-xs sm:text-sm font-semibold py-2 bg-yellow-400 text-black hover:bg-yellow-500 rounded">
+                  Buy Now
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+        <% }); %>
+      </div>
+      <% } %>
+    </main>
+  </div>
+</div>
+
+<style>
+  .sidebar-link {
+    display: block;
+    font-size: 0.875rem;
+    color: #6b7280;
+    padding: 0.3rem 0.5rem;
+    font-weight: 400;
+    border-radius: 3px;
+  }
+  .sidebar-link:hover {
+    color: #eab308;
+  }
+  .sidebar-link.active {
+    color: #eab308;
+    font-weight: 600;
+  }
+  
+  /* Alert animation */
+  @keyframes fadeInOut {
+    0% {
+      opacity: 1;
+    }
+    95% {
+      opacity: 1;
+    }
+    100% {
+      opacity: 0;
+    }
+  }
+  
+  /* Scrollbar for desktop sidebar */
+  aside > div::-webkit-scrollbar {
+    width: 8px;
+  }
+  aside > div::-webkit-scrollbar-track {
+    background: #f3f4f6;
+  }
+  aside > div::-webkit-scrollbar-thumb {
+    background: #d1d5db;
+    border-radius: 4px;
+  }
+  aside > div::-webkit-scrollbar-thumb:hover {
+    background: #9ca3af;
+  }
+
+  /* Scrollbar for mobile filter drawer */
+  #filter-drawer::-webkit-scrollbar {
+    width: 6px;
+  }
+  #filter-drawer::-webkit-scrollbar-track {
+    background: #f3f4f6;
+  }
+  #filter-drawer::-webkit-scrollbar-thumb {
+    background: #d1d5db;
+    border-radius: 3px;
+  }
+  #filter-drawer::-webkit-scrollbar-thumb:hover {
+    background: #9ca3af;
+  }
+</style>
+
+<script>
+  const genderCategories = {
+    '':       ['All', 'Watch', 'T-Shirt', 'Shirt', 'Jeans', 'Tops', 'Dress', 'Tees', 'Bottom'],
+    'Men':    ['All', 'Watch', 'T-Shirt', 'Shirt', 'Jeans'],
+    'Women':  ['All', 'Watch', 'Tops', 'Dress', 'Tees', 'Jeans'],
+  };
+
+  const currentGender   = '<%= gender || "" %>';
+  const currentCategory = '<%= category || "" %>';
+
+  function buildCategoryList(selectedGender, containerId) {
+    const cats = genderCategories[selectedGender] || genderCategories[''];
+    const list  = document.getElementById(containerId);
+    if (!list) return;
+    list.innerHTML = '';
+    cats.forEach(cat => {
+      const a = document.createElement('a');
+      const isAll = cat === 'All';
+      a.href = isAll
+        ? (selectedGender ? '/shop?gender=' + selectedGender : '/shop')
+        : '/shop?' + (selectedGender ? 'gender=' + selectedGender + '&' : '') + 'category=' + encodeURIComponent(cat);
+      a.textContent = cat;
+      const isActive = isAll ? !currentCategory : currentCategory === cat;
+      a.className = 'sidebar-link' + (isActive ? ' active' : '');
+      list.appendChild(a);
+    });
+  }
+
+  function updateCategories(g) { buildCategoryList(g, 'category-list'); buildCategoryList(g, 'category-list-mobile'); }
+
+  // Init
+  buildCategoryList(currentGender, 'category-list');
+  buildCategoryList(currentGender, 'category-list-mobile');
+
+  // Mobile drawer
+  function openFilters()  {
+    document.getElementById('filter-drawer').classList.remove('-translate-x-full');
+    document.getElementById('filter-overlay').classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeFilters() {
+    document.getElementById('filter-drawer').classList.add('-translate-x-full');
+    document.getElementById('filter-overlay').classList.add('hidden');
+    document.body.style.overflow = '';
+  }
+
+  // Show styled alert message
+  function showAlert(message) {
+    const alertDiv = document.createElement('div');
+    alertDiv.className = 'fixed top-24 right-4 sm:right-auto sm:left-1/2 sm:-translate-x-1/2 z-50 bg-yellow-500 text-gray-900 px-3 sm:px-5 py-1.5 sm:py-2 rounded shadow-lg max-w-xs flex items-center justify-between gap-2';
+    alertDiv.style.animation = 'fadeInOut 3s ease-in-out forwards';
+    alertDiv.innerHTML = `
+      <span class="text-xs sm:text-sm font-semibold flex-1">${message}</span>
+      <button onclick="this.parentElement.remove()" class="text-gray-900 hover:text-gray-700 font-bold text-lg shrink-0 ml-1">&times;</button>
+    `;
+    document.body.appendChild(alertDiv);
+    setTimeout(() => alertDiv.remove(), 3000);
+  }
+
+  // Keep hidden size inputs in sync with size dropdown
+  document.querySelectorAll('form').forEach((form) => {
+    form.addEventListener('submit', (event) => {
+      const hiddenSizeInput = form.querySelector('.size-input');
+      if (!hiddenSizeInput) return;
+
+      const selectorId = hiddenSizeInput.dataset.sizeFor;
+      const selector = document.getElementById(selectorId);
+      const selectedSize = selector ? selector.value : '';
+
+      if (!selectedSize) {
+        event.preventDefault();
+        showAlert('Please select a size.');
+        return;
+      }
+
+      hiddenSizeInput.value = selectedSize;
+    });
+  });
+
+  // Flash auto-remove
+  setTimeout(() => {
+    const m = document.getElementById('flash-msg');
+    if (m) m.remove();
+    const e = document.getElementById('flash-error');
+    if (e) e.remove();
+  }, 3000);
+</script>
+
+<%- include('./partials/footer') %>

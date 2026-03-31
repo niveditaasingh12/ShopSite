@@ -1,0 +1,157 @@
+<%- include('./partials/header') %>
+
+<div class="bg-gray-50 min-h-screen">
+  <div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+
+    <!-- Page Header -->
+    <div class="mb-6 flex items-center gap-4">
+      <a href="/account" class="inline-flex items-center justify-center w-10 h-10 rounded-full hover:bg-gray-200 transition">
+        <svg class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+        </svg>
+      </a>
+      <div>
+        <h1 class="text-2xl sm:text-3xl font-bold text-gray-900">Edit Address</h1>
+        <p class="text-sm text-gray-600 mt-1">Update your delivery address details</p>
+      </div>
+    </div>
+
+    <!-- Flash Messages -->
+    <% if (success && success.length > 0) { %>
+      <div class="fixed top-24 right-4 sm:right-auto sm:left-1/2 sm:-translate-x-1/2 z-50 bg-yellow-500 text-gray-900 px-3 sm:px-5 py-1.5 sm:py-2 rounded shadow-lg max-w-xs flex items-center justify-between gap-2 fadeInOut" style="animation: fadeInOut 3s ease-in-out forwards;">
+        <span class="text-xs sm:text-sm font-semibold flex-1"><%= success[0] %></span>
+        <button type="button" onclick="this.parentElement.remove()" class="text-gray-900 hover:text-gray-700 font-bold text-lg shrink-0 ml-1">&times;</button>
+      </div>
+    <% } %>
+
+    <% if (error && error.length > 0) { %>
+      <div class="fixed top-24 right-4 sm:right-auto sm:left-1/2 sm:-translate-x-1/2 z-50 bg-red-500 text-white px-3 sm:px-5 py-1.5 sm:py-2 rounded shadow-lg max-w-xs flex items-center justify-between gap-2 fadeInOut" style="animation: fadeInOut 3s ease-in-out forwards;">
+        <span class="text-xs sm:text-sm font-semibold flex-1"><%= error[0] %></span>
+        <button type="button" onclick="this.parentElement.remove()" class="text-white hover:text-gray-100 font-bold text-lg shrink-0 ml-1">&times;</button>
+      </div>
+    <% } %>
+
+    <!-- Form Card -->
+    <div class="bg-white rounded-lg shadow-sm">
+      <form
+        action="/account/addresses/edit/<%= address._id %>"
+        method="POST"
+        class="p-4 sm:p-6 space-y-6"
+      >
+
+        <!-- Address Line -->
+        <div>
+          <label class="block text-sm font-medium text-gray-900 mb-2">
+            Address Line <span class="text-red-600">*</span>
+          </label>
+          <input
+            type="text"
+            name="line1"
+            value="<%= address.line1 %>"
+            placeholder="House no., Building name, Street name"
+            class="w-full px-4 py-3 border border-gray-300 rounded-lg text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-yellow-500 bg-gray-50"
+            required
+          />
+          <p class="text-xs text-gray-500 mt-1">Enter your complete address with house/building number and street name</p>
+        </div>
+
+        <!-- City -->
+        <div>
+          <label class="block text-sm font-medium text-gray-900 mb-2">
+            City <span class="text-red-600">*</span>
+          </label>
+          <input
+            type="text"
+            name="city"
+            value="<%= address.city %>"
+            placeholder="e.g., Mumbai"
+            class="w-full px-4 py-3 border border-gray-300 rounded-lg text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-yellow-500 bg-gray-50"
+            required
+          />
+        </div>
+
+        <!-- State -->
+        <div>
+          <label class="block text-sm font-medium text-gray-900 mb-2">
+            State <span class="text-red-600">*</span>
+          </label>
+          <input
+            type="text"
+            name="state"
+            value="<%= address.state %>"
+            placeholder="e.g., Maharashtra"
+            class="w-full px-4 py-3 border border-gray-300 rounded-lg text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-yellow-500 bg-gray-50"
+            required
+          />
+        </div>
+
+        <!-- Pincode -->
+        <div>
+          <label class="block text-sm font-medium text-gray-900 mb-2">
+            Pincode <span class="text-red-600">*</span>
+          </label>
+          <input
+            type="text"
+            name="pincode"
+            value="<%= address.pincode %>"
+            placeholder="6-digit postal code"
+            pattern="\d{6}"
+            maxlength="6"
+            class="w-full px-4 py-3 border border-gray-300 rounded-lg text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-yellow-500 bg-gray-50"
+            required
+          />
+          <p class="text-xs text-gray-500 mt-1">Enter a valid 6-digit pincode</p>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="flex flex-col-reverse sm:flex-row gap-3 pt-4 border-t border-gray-200">
+          <a
+            href="/account"
+            class="flex-1 text-center border border-gray-300 text-gray-700 px-6 py-3 rounded-lg font-semibold hover:bg-gray-50 transition"
+          >
+            Cancel
+          </a>
+          <button
+            type="submit"
+            class="flex-1 bg-yellow-500 hover:bg-yellow-600 text-white px-6 py-3 rounded-lg font-semibold transition"
+          >
+            Update Address
+          </button>
+        </div>
+      </form>
+    </div>
+
+  </div>
+</div>
+
+<%- include('./partials/footer') %>
+
+<style>
+  @keyframes fadeInOut {
+    0% {
+      opacity: 1;
+    }
+    85% {
+      opacity: 1;
+    }
+    100% {
+      opacity: 0;
+    }
+  }
+
+  .fadeInOut {
+    animation: fadeInOut 3s ease-in-out forwards;
+  }
+</style>
+
+<script>
+  // Auto-dismiss flash message after 3 seconds
+  window.addEventListener('load', () => {
+    const flashMsg = document.querySelector('.fadeInOut');
+    if (flashMsg) {
+      setTimeout(() => {
+        flashMsg.remove();
+      }, 3000);
+    }
+  });
+</script>

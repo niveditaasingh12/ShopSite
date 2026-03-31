@@ -1,0 +1,255 @@
+<%- include('./partials/header') %>
+
+<div class="bg-gray-50 min-h-screen">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+
+    <!-- Flash Messages -->
+    <% if (success && success.length > 0) { %>
+      <div class="fixed top-24 right-4 sm:right-auto sm:left-1/2 sm:-translate-x-1/2 z-50 bg-yellow-500 text-gray-900 px-3 sm:px-5 py-1.5 sm:py-2 rounded shadow-lg max-w-xs flex items-center justify-between gap-2 fadeInOut" style="animation: fadeInOut 3s ease-in-out forwards;">
+        <span class="text-xs sm:text-sm font-semibold flex-1"><%= success[0] %></span>
+        <button type="button" onclick="this.parentElement.remove()" class="text-gray-900 hover:text-gray-700 font-bold text-lg shrink-0 ml-1">&times;</button>
+      </div>
+    <% } %>
+
+    <% if (error && error.length > 0) { %>
+      <div class="fixed top-24 right-4 sm:right-auto sm:left-1/2 sm:-translate-x-1/2 z-50 bg-red-500 text-white px-3 sm:px-5 py-1.5 sm:py-2 rounded shadow-lg max-w-xs flex items-center justify-between gap-2 fadeInOut" style="animation: fadeInOut 3s ease-in-out forwards;">
+        <span class="text-xs sm:text-sm font-semibold flex-1"><%= error[0] %></span>
+        <button type="button" onclick="this.parentElement.remove()" class="text-white hover:text-gray-100 font-bold text-lg shrink-0 ml-1">&times;</button>
+      </div>
+    <% } %>
+
+    <!-- Page Header -->
+    <div class="mb-6">
+      <h1 class="text-xl sm:text-2xl font-bold text-gray-900">My Account</h1>
+      <p class="text-sm text-gray-600 mt-1">Manage your profile, addresses, and account settings</p>
+    </div>
+
+    <!-- Main Layout: Sidebar + Content -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+
+      <!-- LEFT SIDEBAR -->
+      <div class="md:col-span-1">
+        <div class="bg-white rounded-lg shadow-sm sticky top-24">
+          <nav class="divide-y divide-gray-200">
+            <!-- Profile Section -->
+            <div class="p-4 border-b border-gray-200">
+              <div class="flex items-center gap-3">
+                <img src="<%= user.picture || '/images/default/avatar.jpg' %>" alt="<%= user.fullname %>" class="w-12 h-12 rounded-full object-cover border border-gray-300">
+                <div class="flex-1 min-w-0">
+                  <p class="text-sm font-semibold text-gray-900 truncate"><%= user.fullname %></p>
+                  <p class="text-xs text-gray-600 truncate"><%= user.email %></p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Navigation Links -->
+            <a href="/myorders" class="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-gray-50 transition">
+              <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14a2 2 0 012 2v11a2 2 0 01-2 2H5a2 2 0 01-2-2v-11a2 2 0 012-2z"/>
+              </svg>
+              <span class="text-sm font-medium">My Orders</span>
+            </a>
+
+            <button onclick="scrollToSection('profile')" class="w-full text-left flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-gray-50 transition">
+              <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+              </svg>
+              <span class="text-sm font-medium">Profile</span>
+            </button>
+
+            <button onclick="scrollToSection('addresses')" class="w-full text-left flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-gray-50 transition">
+              <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+              </svg>
+              <span class="text-sm font-medium">Addresses</span>
+            </button>
+
+            <button onclick="scrollToSection('security')" class="w-full text-left flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-gray-50 transition">
+              <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+              </svg>
+              <span class="text-sm font-medium">Security</span>
+            </button>
+
+            <a href="/contact" class="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-gray-50 transition">
+              <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z"/>
+              </svg>
+              <span class="text-sm font-medium">Help & Support</span>
+            </a>
+          </nav>
+        </div>
+      </div>
+
+      <!-- RIGHT CONTENT -->
+      <div class="md:col-span-3 space-y-6">
+
+        <!-- PROFILE SECTION -->
+        <section id="profile" class="bg-white rounded-lg shadow-sm">
+          <div class="border-b border-gray-200 px-4 sm:px-6 py-4">
+            <h2 class="text-base sm:text-lg font-semibold text-gray-900 flex items-center gap-2">
+              <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+              </svg>
+              Personal Information
+            </h2>
+          </div>
+
+          <div class="p-4 sm:p-6">
+            <div class="flex flex-col sm:flex-row items-start sm:items-center gap-6 mb-6 pb-6 border-b border-gray-200">
+              <img src="<%= user.picture || '/images/default/avatar.jpg' %>" alt="<%= user.fullname %>" class="w-24 h-24 sm:w-28 sm:h-28 rounded-lg object-cover border border-gray-300">
+              <div class="flex-1 w-full">
+                <h3 class="text-base sm:text-lg font-semibold text-gray-900 mb-1"><%= user.fullname %></h3>
+                <p class="text-sm text-gray-600 mb-4"><%= user.email %></p>
+                <a href="/account/edit" class="inline-block bg-yellow-500 hover:bg-yellow-600 text-white px-6 py-2.5 rounded-lg font-medium text-sm transition">
+                  Edit Profile
+                </a>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div class="bg-gray-50 p-4 rounded-lg">
+                <p class="text-xs text-gray-600 mb-1">Full Name</p>
+                <p class="text-sm font-medium text-gray-900"><%= user.fullname %></p>
+              </div>
+              <div class="bg-gray-50 p-4 rounded-lg">
+                <p class="text-xs text-gray-600 mb-1">Email Address</p>
+                <p class="text-sm font-medium text-gray-900 break-all"><%= user.email %></p>
+              </div>
+              <% if (user.phone) { %>
+              <div class="bg-gray-50 p-4 rounded-lg">
+                <p class="text-xs text-gray-600 mb-1">Phone Number</p>
+                <p class="text-sm font-medium text-gray-900"><%= user.phone %></p>
+              </div>
+              <% } %>
+            </div>
+          </div>
+        </section>
+
+        <!-- ADDRESSES SECTION -->
+        <section id="addresses" class="bg-white rounded-lg shadow-sm">
+          <div class="border-b border-gray-200 px-4 sm:px-6 py-4 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
+            <h2 class="text-base sm:text-lg font-semibold text-gray-900 flex items-center gap-2">
+              <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+              </svg>
+              Saved Addresses
+            </h2>
+          </div>
+
+          <div class="p-4 sm:p-6">
+            <% if (user.addresses.length === 0) { %>
+              <div class="text-center py-8">
+                <svg class="w-16 h-16 mx-auto text-gray-300 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                </svg>
+                <p class="text-gray-500 text-sm mb-4">No saved addresses yet</p>
+                <a href="/account/addresses/new" class="inline-block bg-yellow-500 hover:bg-yellow-600 text-white px-6 py-2.5 rounded-lg font-medium text-sm transition">
+                  Add Your First Address
+                </a>
+              </div>
+            <% } else { %>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <% user.addresses.forEach(addr => { %>
+                  <div class="border border-gray-300 rounded-lg p-4 hover:shadow-md transition">
+                    <div class="flex items-start justify-between mb-3">
+                      <div>
+                        <% if (addr.isDefault) { %>
+                          <span class="inline-block bg-green-100 text-green-800 px-3 py-1 rounded-full text-xs font-semibold mb-2">Default Address</span>
+                        <% } %>
+                      </div>
+                    </div>
+
+                    <p class="text-sm font-medium text-gray-900 mb-1"><%= addr.line1 %></p>
+                    <p class="text-sm text-gray-600"><%= addr.city %>, <%= addr.state %> - <%= addr.pincode %></p>
+
+                    <div class="flex gap-3 mt-4 pt-4 border-t border-gray-200">
+                      <a href="/account/addresses/edit/<%= addr._id %>" class="text-sm text-blue-600 hover:text-blue-700 font-medium">
+                        Edit
+                      </a>
+                      <% if (!addr.isDefault) { %>
+                        <a href="/account/addresses/default/<%= addr._id %>" class="text-sm text-gray-600 hover:text-gray-700 font-medium">
+                          Set Default
+                        </a>
+                      <% } %>
+                      <a href="/account/addresses/delete/<%= addr._id %>" class="text-sm text-red-600 hover:text-red-700 font-medium">
+                        Delete
+                      </a>
+                    </div>
+                  </div>
+                <% }) %>
+              </div>
+            <% } %>
+          </div>
+        </section>
+
+        <!-- SECURITY SECTION -->
+        <section id="security" class="bg-white rounded-lg shadow-sm">
+          <div class="border-b border-gray-200 px-4 sm:px-6 py-4">
+            <h2 class="text-base sm:text-lg font-semibold text-gray-900 flex items-center gap-2">
+              <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+              </svg>
+              Security & Password
+            </h2>
+          </div>
+
+          <div class="p-4 sm:p-6">
+            <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+              <p class="text-sm text-blue-900">Keep your account secure by updating your password regularly.</p>
+            </div>
+
+            <a href="/account/changepassword" class="inline-block bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-lg font-medium text-sm transition">
+              Change Password
+            </a>
+          </div>
+        </section>
+
+      </div>
+
+    </div>
+
+  </div>
+</div>
+
+<%- include('./partials/footer') %>
+
+<style>
+  @keyframes fadeInOut {
+    0% {
+      opacity: 1;
+    }
+    85% {
+      opacity: 1;
+    }
+    100% {
+      opacity: 0;
+    }
+  }
+
+  .fadeInOut {
+    animation: fadeInOut 3s ease-in-out forwards;
+  }
+</style>
+
+<script>
+  function scrollToSection(sectionId) {
+    const element = document.getElementById(sectionId);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }
+
+  // Auto-dismiss flash message after 3 seconds
+  window.addEventListener('load', () => {
+    const flashMsg = document.querySelector('.fadeInOut');
+    if (flashMsg) {
+      setTimeout(() => {
+        flashMsg.remove();
+      }, 3000);
+    }
+  });
+</script>

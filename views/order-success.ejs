@@ -1,0 +1,165 @@
+<%- include('./partials/header') %>
+
+<div class="bg-gray-50 min-h-screen">
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+
+    <!-- Success Message Card -->
+    <div class="bg-white rounded-lg shadow-sm mb-6 overflow-hidden">
+      <!-- Success Banner -->
+      <div class="bg-yellow-500 px-6 py-8 text-center">
+        <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-white mb-4">
+          <svg class="w-10 h-10 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
+          </svg>
+        </div>
+        <h1 class="text-2xl sm:text-3xl font-bold text-white mb-2">Order Placed Successfully!</h1>
+        <p class="text-yellow-50 text-sm sm:text-base">Thank you for shopping with us</p>
+      </div>
+
+      <!-- Order Info -->
+      <div class="px-6 py-6 border-b border-gray-200">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div>
+            <p class="text-sm text-gray-600">An email confirmation has been sent</p>
+          </div>
+          <a href="/myorders" class="inline-flex items-center gap-2 text-sm text-blue-600 hover:text-blue-700 font-medium">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+            </svg>
+            View All Orders
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Delivery & Address Info -->
+    <div class="grid sm:grid-cols-2 gap-6 mb-6">
+      
+      <!-- Delivery Address -->
+      <div class="bg-white rounded-lg shadow-sm p-6">
+        <div class="flex items-start gap-3 mb-3">
+          <svg class="w-5 h-5 text-gray-400 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+          </svg>
+          <div>
+            <h3 class="font-semibold text-gray-800 mb-2">Delivery Address</h3>
+            <p class="text-sm text-gray-700 leading-relaxed">
+              <span class="font-medium"><%= user.fullname %></span><br>
+              <%= address.address %>, <%= address.city %><br>
+              <%= address.state %> - <%= address.pincode %>
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Expected Delivery -->
+      <div class="bg-white rounded-lg shadow-sm p-6">
+        <div class="flex items-start gap-3 mb-3">
+          <svg class="w-5 h-5 text-gray-400 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z"/>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0"/>
+          </svg>
+          <div>
+            <h3 class="font-semibold text-gray-800 mb-2">Expected Delivery</h3>
+            <p class="text-sm text-green-600 font-medium">
+              <%= deliveryDate.toLocaleDateString('en-US', { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' }) %>
+            </p>
+            <p class="text-xs text-gray-500 mt-1">Your order will arrive soon</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Order Items -->
+    <div class="bg-white rounded-lg shadow-sm mb-6">
+      <div class="px-6 py-4 border-b border-gray-200">
+        <h2 class="text-lg font-semibold text-gray-800">Items in Your Order</h2>
+      </div>
+
+      <div class="divide-y divide-gray-200">
+        <% if (fromOrderId) { %>
+          <% order.products.forEach(item => { %>
+            <div class="px-6 py-4">
+              <div class="flex gap-4">
+                <div class="shrink-0">
+                  <img src="<%= item.product.image %>" alt="<%= item.product.name %>" class="w-20 h-20 sm:w-24 sm:h-24 object-cover rounded-md border border-gray-200">
+                </div>
+                <div class="flex-1 min-w-0">
+                  <h3 class="text-base font-medium text-gray-900 mb-1">
+                    <%= item.product.name %>
+                  </h3>
+                  <div class="flex flex-wrap items-center gap-4 text-sm text-gray-600">
+                    <span>Qty: <span class="font-medium"><%= item.quantity %></span></span>
+                    <% if (item.size) { %>
+                      <span>Size: <span class="font-medium"><%= item.size %></span></span>
+                    <% } %>
+                  </div>
+                </div>
+              </div>
+            </div>
+          <% }) %>
+        <% } else { %>
+          <% products.forEach(item => { %>
+            <div class="px-6 py-4">
+              <div class="flex gap-4">
+                <div class="shrink-0">
+                  <img src="<%= item.image %>" alt="<%= item.name %>" class="w-20 h-20 sm:w-24 sm:h-24 object-cover rounded-md border border-gray-200">
+                </div>
+                <div class="flex-1 min-w-0">
+                  <h3 class="text-base font-medium text-gray-900 mb-1">
+                    <%= item.name %>
+                  </h3>
+                  <div class="flex flex-wrap items-center gap-4 text-sm text-gray-600">
+                    <span>Qty: <span class="font-medium"><%= item.quantity %></span></span>
+                    <% if (item.size) { %>
+                      <span>Size: <span class="font-medium"><%= item.size %></span></span>
+                    <% } %>
+                  </div>
+                </div>
+              </div>
+            </div>
+          <% }) %>
+        <% } %>
+      </div>
+
+      <!-- Total Amount -->
+      <div class="px-6 py-4 bg-gray-50 border-t border-gray-200">
+        <div class="flex justify-between items-center">
+          <span class="text-base font-semibold text-gray-800">Total Amount Paid</span>
+          <span class="text-xl sm:text-2xl font-semibold text-gray-900">
+            <% if (fromOrderId) { %>
+              ₹<%= order.totalAmount.toFixed(2) %>
+            <% } else { %>
+              ₹<%= totalAmount.toFixed(2) %>
+            <% } %>
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
+      <a href="/shop" class="w-full sm:w-auto inline-block text-center bg-yellow-500 hover:bg-yellow-600 text-white font-semibold px-8 py-3 rounded-md">
+        Continue Shopping
+      </a>
+      <a href="/myorders" class="w-full sm:w-auto inline-block text-center bg-white hover:bg-gray-50 text-gray-800 font-semibold px-8 py-3 rounded-md border border-gray-300">
+        Track Order
+      </a>
+    </div>
+
+    <!-- Help Text -->
+    <div class="mt-8 text-center">
+      <p class="text-sm text-gray-500 flex items-center justify-center gap-2">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+        </svg>
+        Need help? Contact our support team
+      </p>
+    </div>
+
+  </div>
+</div>
+
+<%- include('./partials/footer') %>

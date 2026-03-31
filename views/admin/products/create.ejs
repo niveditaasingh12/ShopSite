@@ -1,0 +1,120 @@
+<%- include('../../adminpartials/header') %>
+
+<div class="max-w-4xl mx-auto px-6 lg:px-16 pb-10">
+    <h2 class="text-2xl font-bold mb-6 text-gray-800">Create New Product</h2>
+
+    <% if (success && success.length > 0) { %>
+        <div class="fixed top-24 right-4 sm:right-auto sm:left-1/2 sm:-translate-x-1/2 z-50 bg-yellow-500 text-gray-900 px-3 sm:px-5 py-1.5 sm:py-2 rounded shadow-lg max-w-xs flex items-center justify-between gap-2">
+            <span class="text-xs sm:text-sm font-semibold flex-1"><%= success %></span>
+            <button type="button" onclick="this.parentElement.remove()" class="text-gray-900 hover:text-gray-700 font-bold text-lg shrink-0 ml-1">&times;</button>
+        </div>
+    <% } %>
+
+    <% if (error && error.length > 0) { %>
+        <div class="fixed top-24 right-4 sm:right-auto sm:left-1/2 sm:-translate-x-1/2 z-50 bg-yellow-500 text-gray-900 px-3 sm:px-5 py-1.5 sm:py-2 rounded shadow-lg max-w-xs flex items-center justify-between gap-2">
+            <span class="text-xs sm:text-sm font-semibold flex-1"><%= error %></span>
+            <button type="button" onclick="this.parentElement.remove()" class="text-gray-900 hover:text-gray-700 font-bold text-lg shrink-0 ml-1">&times;</button>
+        </div>
+    <% } %>
+
+    <div class="bg-white rounded-lg shadow-lg p-8">
+        <form action="/products/create" method="post" enctype="multipart/form-data" class="space-y-6">
+            <!-- Product Image -->
+            <div>
+                <label class="block mb-2 text-sm font-medium text-gray-700">Product Image</label>
+                <input name="image" type="file"
+                    class="block w-full text-sm text-gray-900 border border-gray-300 rounded-md cursor-pointer bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+            </div>
+
+            <!-- Product Details -->
+            <div>
+                <h3 class="text-lg font-semibold text-gray-800 mb-3">Product Details</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Name</label>
+                        <input name="name" type="text" placeholder="Product Name"
+                            class="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-500 outline-none" />
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Price</label>
+                        <input name="price" type="number" placeholder="Product Price"
+                            class="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-500 outline-none" />
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Discount Price</label>
+                        <input name="discount" type="number" placeholder="Discount Price"
+                            class="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-500 outline-none" />
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Gender</label>
+                        <select name="gender" class="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-500 outline-none">
+                            <option value="Men">Men</option>
+                            <option value="Women">Women</option>
+                            <option value="Unisex">Unisex</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Category</label>
+                        <select name="category" class="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-500 outline-none">
+                            <option value="Watch">Watch</option>
+                            <option value="T-Shirt">T-Shirt</option>
+                            <option value="Shirt">Shirt</option>
+                            <option value="Jeans">Jeans</option>
+                            <option value="Tops">Tops</option>
+                            <option value="Dress">Dress</option>
+                            <option value="Tees">Tees</option>
+                            <option value="Bottom">Bottom</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Panel Styling -->
+            <div>
+                <h3 class="text-lg font-semibold text-gray-800 mb-3">Panel Styling</h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Background Color</label>
+                        <div class="flex items-center gap-2">
+                          <input name="bgcolor" type="color" value="#f9fafb"
+                              class="h-10 w-14 border border-gray-300 rounded-md cursor-pointer" />
+                          <span class="text-xs text-gray-400">Pick or type below</span>
+                        </div>
+                        <input name="bgcolor_text" type="text" placeholder="#f9fafb" oninput="this.previousElementSibling.previousElementSibling.value=this.value"
+                            class="mt-1 w-full border border-gray-300 rounded-md p-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none" />
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Panel Color</label>
+                        <div class="flex items-center gap-2">
+                          <input name="panelcolor" type="color" value="#ffffff"
+                              class="h-10 w-14 border border-gray-300 rounded-md cursor-pointer" />
+                          <span class="text-xs text-gray-400">Pick or type below</span>
+                        </div>
+                        <input name="panelcolor_text" type="text" placeholder="#ffffff" oninput="this.previousElementSibling.previousElementSibling.value=this.value"
+                            class="mt-1 w-full border border-gray-300 rounded-md p-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none" />
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Text Color</label>
+                        <div class="flex items-center gap-2">
+                          <input name="textcolor" type="color" value="#1f2937"
+                              class="h-10 w-14 border border-gray-300 rounded-md cursor-pointer" />
+                          <span class="text-xs text-gray-400">Pick or type below</span>
+                        </div>
+                        <input name="textcolor_text" type="text" placeholder="#1f2937" oninput="this.previousElementSibling.previousElementSibling.value=this.value"
+                            class="mt-1 w-full border border-gray-300 rounded-md p-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none" />
+                    </div>
+                </div>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="pt-4">
+                <button type="submit"
+                    class="bg-blue-600 hover:bg-blue-700 transition text-white px-6 py-2 rounded-md font-medium w-full md:w-auto">
+                    Create Product
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<%- include('../../adminpartials/footer') %>

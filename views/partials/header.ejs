@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Scatch</title>
+
+  <!-- Remix Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet" />
+
+  <link rel="stylesheet" href="/css/tailwind.css">
+  <!-- Modern Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+    }
+  </style>
+</head>
+
+<body>
+
+  <% var loggedin = typeof loggedIn !== 'undefined' ? loggedIn : true %>
+
+  <!-- Watchvana Navbar -->
+  <nav class="w-full bg-white shadow-md sticky top-0 z-50 border-b border-gray-200">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-16 flex justify-between items-center h-16">
+
+      <!-- Logo -->
+      <div class="flex items-center">
+        <div class="text-3xl font-bold tracking-tight text-gray-900">
+          <a href="/" class="hover:opacity-90 transition duration-200">
+            <span class="text-yellow-500">Sca</span><span class="text-gray-900">tch</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Desktop Links -->
+      <% if (loggedin) { %>
+      <div class="hidden md:flex items-center gap-8 text-sm font-medium">
+        <% if (currentPath !== '/shop') { %>
+        <a href="/shop" class="hover:text-yellow-500 transition">Shop</a>
+        <% } %>
+        <a href="/cart" class="flex items-center gap-1 text-gray-700 hover:text-yellow-500 transition">
+          <i class="ri-shopping-cart-2-line text-xl"></i>
+          <span>Cart</span>
+        </a>
+        <a href="/myorders" class="hover:text-yellow-500 transition">Orders</a>
+        <a href="/account" class="hover:text-yellow-500 transition">Account</a>
+        <a href="/users/logout" class="text-red-600 hover:text-red-700 transition font-bold">Logout</a>
+      </div>
+
+      <!-- Mobile Menu Button -->
+      <% if (loggedin) { %>
+      <button id="mobileMenuBtn" class="md:hidden p-2 rounded-lg hover:bg-gray-100 transition">
+        <i class="ri-menu-line text-2xl text-gray-900"></i>
+      </button>
+      <% } %>
+      <% } %>
+    </div>
+
+    <!-- Mobile Menu -->
+    <% if (loggedin) { %>
+    <div id="mobileMenu" class="hidden md:hidden bg-white border-t border-gray-200">
+      <div class="px-4 py-4 space-y-3">
+        <% if (currentPath !== '/shop') { %>
+        <a href="/shop" class="block px-4 py-2.5 text-gray-700 hover:bg-yellow-50 hover:text-yellow-600 rounded-lg transition font-medium">
+          <i class="ri-shopping-bag-line mr-2"></i>Shop
+        </a>
+        <% } %>
+        <a href="/cart" class="block px-4 py-2.5 text-gray-700 hover:bg-yellow-50 hover:text-yellow-600 rounded-lg transition font-medium">
+          <i class="ri-shopping-cart-2-line mr-2"></i>Cart
+        </a>
+        <a href="/myorders" class="block px-4 py-2.5 text-gray-700 hover:bg-yellow-50 hover:text-yellow-600 rounded-lg transition font-medium">
+          <i class="ri-file-list-line mr-2"></i>Orders
+        </a>
+        <a href="/account" class="block px-4 py-2.5 text-gray-700 hover:bg-yellow-50 hover:text-yellow-600 rounded-lg transition font-medium">
+          <i class="ri-user-line mr-2"></i>Account
+        </a>
+        <a href="/users/logout" class="block px-4 py-2.5 text-red-600 hover:bg-red-50 hover:text-red-700 rounded-lg transition font-bold border-t border-gray-200 mt-2">
+          <i class="ri-logout-box-line mr-2"></i>Logout
+        </a>
+      </div>
+    </div>
+    <% } %>
+  </nav>
+
+  <script>
+    // Mobile menu toggle
+    const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+    const mobileMenu = document.getElementById('mobileMenu');
+
+    if (mobileMenuBtn) {
+      mobileMenuBtn.addEventListener('click', function() {
+        mobileMenu.classList.toggle('hidden');
+      });
+
+      // Close menu when clicking a link
+      const mobileLinks = mobileMenu.querySelectorAll('a');
+      mobileLinks.forEach(link => {
+        link.addEventListener('click', function() {
+          mobileMenu.classList.add('hidden');
+        });
+      });
+    }
+  </script>
+
+</body>
+
+</html>

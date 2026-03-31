@@ -1,0 +1,254 @@
+<%- include('./partials/header') %>
+
+<div class="bg-gray-50 min-h-screen">
+  <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+
+    <!-- Page Header -->
+    <div class="mb-6 flex items-center gap-4">
+      <a href="/account" class="inline-flex items-center justify-center w-10 h-10 rounded-full hover:bg-gray-200 transition">
+        <svg class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+        </svg>
+      </a>
+      <div>
+        <h1 class="text-2xl sm:text-3xl font-bold text-gray-900">Edit Profile</h1>
+        <p class="text-sm text-gray-600 mt-1">Update your personal information</p>
+      </div>
+    </div>
+
+    <!-- Flash Messages -->
+    <% if (success && success.length > 0) { %>
+      <div class="fixed top-24 right-4 sm:right-auto sm:left-1/2 sm:-translate-x-1/2 z-50 bg-yellow-500 text-gray-900 px-3 sm:px-5 py-1.5 sm:py-2 rounded shadow-lg max-w-xs flex items-center justify-between gap-2 fadeInOut" style="animation: fadeInOut 3s ease-in-out forwards;">
+        <span class="text-xs sm:text-sm font-semibold flex-1"><%= success[0] %></span>
+        <button type="button" onclick="this.parentElement.remove()" class="text-gray-900 hover:text-gray-700 font-bold text-lg shrink-0 ml-1">&times;</button>
+      </div>
+    <% } %>
+
+    <% if (error && error.length > 0) { %>
+      <div class="fixed top-24 right-4 sm:right-auto sm:left-1/2 sm:-translate-x-1/2 z-50 bg-red-500 text-white px-3 sm:px-5 py-1.5 sm:py-2 rounded shadow-lg max-w-xs flex items-center justify-between gap-2 fadeInOut" style="animation: fadeInOut 3s ease-in-out forwards;">
+        <span class="text-xs sm:text-sm font-semibold flex-1"><%= error[0] %></span>
+        <button type="button" onclick="this.parentElement.remove()" class="text-white hover:text-gray-100 font-bold text-lg shrink-0 ml-1">&times;</button>
+      </div>
+    <% } %>
+
+    <!-- Main Form Card -->
+    <form action="/account/edit" method="POST" enctype="multipart/form-data" class="space-y-6">
+
+      <!-- Profile Picture Section -->
+      <div class="bg-white rounded-lg shadow-sm">
+        <div class="border-b border-gray-200 px-4 sm:px-6 py-4">
+          <h2 class="text-lg font-semibold text-gray-900 flex items-center gap-2">
+            <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+            </svg>
+            Profile Picture
+          </h2>
+        </div>
+
+        <div class="p-4 sm:p-6">
+          <div class="flex flex-col sm:flex-row items-center sm:items-start gap-6">
+            <!-- Current Picture -->
+            <div class="shrink-0">
+              <img 
+                id="profilePreview"
+                src="<%= user.picture || '/images/default/avatar.jpg' %>" 
+                alt="<%= user.fullname %>" 
+                class="w-32 h-32 rounded-lg object-cover border-2 border-gray-300"
+              />
+            </div>
+
+            <!-- Upload Section -->
+            <div class="flex-1 w-full">
+              <p class="text-sm text-gray-600 mb-4">Choose a profile picture. File size should not exceed 5MB.</p>
+              
+              <label for="avatar" class="block mb-2">
+                <div class="border-2 border-dashed border-gray-300 rounded-lg p-6 sm:p-8 text-center hover:border-yellow-500 hover:bg-yellow-50 transition cursor-pointer">
+                  <svg class="w-10 h-10 mx-auto text-gray-400 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                  </svg>
+                  <p class="text-sm font-medium text-gray-700">Click to upload or drag and drop</p>
+                  <p class="text-xs text-gray-500">PNG, JPG, GIF up to 5MB</p>
+                </div>
+              </label>
+
+              <input
+                id="avatar"
+                type="file"
+                name="avatar"
+                accept="image/*"
+                class="hidden"
+                onchange="previewImage(event)"
+              />
+
+              <button type="button" onclick="document.getElementById('avatar').click()" class="w-full mt-4 bg-yellow-500 hover:bg-yellow-600 text-white px-6 py-2.5 rounded-lg font-medium text-sm transition">
+                Choose Image
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Personal Information Section -->
+      <div class="bg-white rounded-lg shadow-sm">
+        <div class="border-b border-gray-200 px-4 sm:px-6 py-4">
+          <h2 class="text-lg font-semibold text-gray-900 flex items-center gap-2">
+            <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+            Personal Information
+          </h2>
+        </div>
+
+        <div class="p-4 sm:p-6 space-y-6">
+
+          <!-- Full Name -->
+          <div>
+            <label class="block text-sm font-medium text-gray-900 mb-2">
+              Full Name <span class="text-red-600">*</span>
+            </label>
+            <input
+              type="text"
+              name="fullname"
+              value="<%= user.fullname %>"
+              class="w-full px-4 py-3 border border-gray-300 rounded-lg text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-yellow-500 bg-gray-50"
+              required
+              placeholder="Enter your full name"
+            />
+            <p class="text-xs text-gray-500 mt-1">This is the name that will appear on your orders and account</p>
+          </div>
+
+          <!-- Email (Read-only) -->
+          <div>
+            <label class="block text-sm font-medium text-gray-900 mb-2">
+              Email Address
+            </label>
+            <input
+              type="email"
+              value="<%= user.email %>"
+              disabled
+              class="w-full px-4 py-3 border border-gray-300 rounded-lg text-sm sm:text-base bg-gray-100 text-gray-600 cursor-not-allowed"
+            />
+            <p class="text-xs text-gray-500 mt-1">Email cannot be changed. Contact support for assistance.</p>
+          </div>
+
+          <!-- Phone Number -->
+          <div>
+            <label class="block text-sm font-medium text-gray-900 mb-2">
+              Phone Number
+            </label>
+            <input
+              type="tel"
+              name="phone"
+              value="<%= user.phone || '' %>"
+              class="w-full px-4 py-3 border border-gray-300 rounded-lg text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-yellow-500 bg-gray-50"
+              placeholder="Enter your phone number (optional)"
+              pattern="[0-9]{10}"
+            />
+            <p class="text-xs text-gray-500 mt-1">Enter your 10-digit mobile number</p>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="flex flex-col-reverse sm:flex-row gap-3">
+        <a href="/account" class="flex-1 text-center border border-gray-300 text-gray-700 px-6 py-3 rounded-lg font-semibold hover:bg-gray-50 transition">
+          Cancel
+        </a>
+        <button
+          type="submit"
+          class="flex-1 bg-yellow-500 hover:bg-yellow-600 text-white px-6 py-3 rounded-lg font-semibold text-base transition"
+        >
+          Save Changes
+        </button>
+      </div>
+
+      <!-- Info Banner -->
+      <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+        <p class="text-sm text-blue-900">
+          <strong>Note:</strong> Your changes will be saved immediately. You'll be redirected to your account page once the profile is updated.
+        </p>
+      </div>
+
+    </form>
+
+  </div>
+</div>
+
+<%- include('./partials/footer') %>
+
+<style>
+  @keyframes fadeInOut {
+    0% {
+      opacity: 1;
+    }
+    85% {
+      opacity: 1;
+    }
+    100% {
+      opacity: 0;
+    }
+  }
+
+  .fadeInOut {
+    animation: fadeInOut 3s ease-in-out forwards;
+  }
+</style>
+
+<script>
+  // Image preview function
+  function previewImage(event) {
+    const file = event.target.files[0];
+    
+    // Validate file size (5MB max)
+    if (file && file.size > 5 * 1024 * 1024) {
+      alert('File size must not exceed 5MB');
+      event.target.value = '';
+      return;
+    }
+
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        document.getElementById('profilePreview').src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+
+  // Auto-dismiss flash message after 3 seconds
+  window.addEventListener('load', () => {
+    const flashMsg = document.querySelector('.fadeInOut');
+    if (flashMsg) {
+      setTimeout(() => {
+        flashMsg.remove();
+      }, 3000);
+    }
+  });
+
+  // Drag and drop functionality
+  const avatarLabel = document.querySelector('label[for="avatar"]');
+  const avatarInput = document.getElementById('avatar');
+
+  if (avatarLabel) {
+    avatarLabel.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      avatarLabel.classList.add('border-yellow-500', 'bg-yellow-50');
+    });
+
+    avatarLabel.addEventListener('dragleave', () => {
+      avatarLabel.classList.remove('border-yellow-500', 'bg-yellow-50');
+    });
+
+    avatarLabel.addEventListener('drop', (e) => {
+      e.preventDefault();
+      avatarLabel.classList.remove('border-yellow-500', 'bg-yellow-50');
+      
+      const files = e.dataTransfer.files;
+      if (files.length > 0) {
+        avatarInput.files = files;
+        previewImage({ target: { files: files } });
+      }
+    });
+  }
+</script>

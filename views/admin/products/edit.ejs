@@ -1,0 +1,111 @@
+<%- include('../../adminpartials/header') %>
+
+<div class="max-w-4xl mx-auto px-6 lg:px-16 pb-10">
+    <h2 class="text-2xl font-bold mb-6 text-gray-800">Edit Product</h2>
+
+    <% if (success && success.length > 0) { %>
+        <div class="fixed top-24 right-4 sm:right-auto sm:left-1/2 sm:-translate-x-1/2 z-50 bg-yellow-500 text-gray-900 px-3 sm:px-5 py-1.5 sm:py-2 rounded shadow-lg max-w-xs flex items-center justify-between gap-2">
+            <span class="text-xs sm:text-sm font-semibold flex-1"><%= success %></span>
+            <button type="button" onclick="this.parentElement.remove()" class="text-gray-900 hover:text-gray-700 font-bold text-lg shrink-0 ml-1">&times;</button>
+        </div>
+    <% } %>
+
+    <% if (error && error.length > 0) { %>
+        <div class="fixed top-24 right-4 sm:right-auto sm:left-1/2 sm:-translate-x-1/2 z-50 bg-yellow-500 text-gray-900 px-3 sm:px-5 py-1.5 sm:py-2 rounded shadow-lg max-w-xs flex items-center justify-between gap-2">
+            <span class="text-xs sm:text-sm font-semibold flex-1"><%= error %></span>
+            <button type="button" onclick="this.parentElement.remove()" class="text-gray-900 hover:text-gray-700 font-bold text-lg shrink-0 ml-1">&times;</button>
+        </div>
+    <% } %>
+
+    <div class="bg-white rounded-lg shadow-lg p-8">
+        <form action="/products/edit/<%= product._id %>" method="post" enctype="multipart/form-data" class="space-y-6">
+            <!-- Current Image Preview -->
+            <div class="flex items-center space-x-4 mb-4">
+                <div class="w-20 h-20 rounded-lg overflow-hidden border border-gray-200">
+                     <img class="w-full h-full object-cover" src="data:image/jpeg;base64,<%= product.image.toString('base64') %>" alt="<%= product.name %>">
+                </div>
+                <div>
+                    <label class="block mb-2 text-sm font-medium text-gray-700">Change Image (Optional)</label>
+                    <input name="image" type="file"
+                        class="block w-full text-sm text-gray-900 border border-gray-300 rounded-md cursor-pointer bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                </div>
+            </div>
+
+            <!-- Product Details -->
+            <div>
+                <h3 class="text-lg font-semibold text-gray-800 mb-3">Product Details</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Name</label>
+                        <input name="name" type="text" value="<%= product.name %>"
+                            class="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-500 outline-none" />
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Price</label>
+                        <input name="price" type="number" value="<%= product.price %>"
+                            class="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-500 outline-none" />
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Discount Price</label>
+                        <input name="discount" type="number" value="<%= product.discount %>"
+                            class="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-500 outline-none" />
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Gender</label>
+                        <select name="gender" class="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-500 outline-none">
+                            <option value="Men" <%= product.gender === 'Men' ? 'selected' : '' %>>Men</option>
+                            <option value="Women" <%= product.gender === 'Women' ? 'selected' : '' %>>Women</option>
+                            <option value="Unisex" <%= product.gender === 'Unisex' ? 'selected' : '' %>>Unisex</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Category</label>
+                        <select name="category" class="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-500 outline-none">
+                            <option value="Watch" <%= product.category === 'Watch' ? 'selected' : '' %>>Watch</option>
+                            <option value="T-Shirt" <%= product.category === 'T-Shirt' ? 'selected' : '' %>>T-Shirt</option>
+                            <option value="Shirt" <%= product.category === 'Shirt' ? 'selected' : '' %>>Shirt</option>
+                            <option value="Jeans" <%= product.category === 'Jeans' ? 'selected' : '' %>>Jeans</option>
+                            <option value="Tops" <%= product.category === 'Tops' ? 'selected' : '' %>>Tops</option>
+                            <option value="Dress" <%= product.category === 'Dress' ? 'selected' : '' %>>Dress</option>
+                            <option value="Tees" <%= product.category === 'Tees' ? 'selected' : '' %>>Tees</option>
+                            <option value="Bottom" <%= product.category === 'Bottom' ? 'selected' : '' %>>Bottom</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Panel Styling -->
+            <div>
+                <h3 class="text-lg font-semibold text-gray-800 mb-3">Panel Styling</h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Background Color</label>
+                        <input name="bgcolor" type="text" value="<%= product.bgcolor %>"
+                            class="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-500 outline-none" />
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Panel Color</label>
+                        <input name="panelcolor" type="text" value="<%= product.panelcolor %>"
+                            class="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-500 outline-none" />
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Text Color</label>
+                        <input name="textcolor" type="text" value="<%= product.textcolor %>"
+                            class="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-500 outline-none" />
+                    </div>
+                </div>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="pt-4 flex justify-between">
+                <a href="/admin/products" class="text-gray-600 px-4 py-2 rounded-md hover:bg-gray-100 transition">Cancel</a>
+                <button type="submit"
+                    class="bg-blue-600 hover:bg-blue-700 transition text-white px-6 py-2 rounded-md font-medium">
+                    Update Product
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<%- include('../../adminpartials/footer') %>

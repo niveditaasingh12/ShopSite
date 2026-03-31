@@ -1,0 +1,48 @@
+<!-- Gender -->
+<div>
+  <h3 class="text-sm font-bold text-gray-800 mb-3">Gender</h3>
+  <div class="flex flex-col space-y-2">
+    <a href="/shop" class="sidebar-link <%= !gender ? 'active' : '' %>">All</a>
+    <a href="/shop?gender=Men" onclick="updateCategories('Men')" class="sidebar-link <%= gender === 'Men' ? 'active' : '' %>">Men</a>
+    <a href="/shop?gender=Women" onclick="updateCategories('Women')" class="sidebar-link <%= gender === 'Women' ? 'active' : '' %>">Women</a>
+  </div>
+</div>
+
+<div class="border-t border-gray-200 my-4"></div>
+
+<!-- Categories -->
+<div>
+  <h3 class="text-sm font-bold text-gray-800 mb-3">Category</h3>
+  <div id="category-list-mobile" class="flex flex-col space-y-2">
+    <!-- JS populated -->
+  </div>
+</div>
+
+<div class="border-t border-gray-200 my-4"></div>
+
+<!-- Sort -->
+<div>
+  <h3 class="text-sm font-bold text-gray-800 mb-3">Sort By</h3>
+  <form method="GET" action="/shop">
+    <% if (gender) { %><input type="hidden" name="gender" value="<%= gender %>"><% } %>
+    <% if (category) { %><input type="hidden" name="category" value="<%= category %>"><% } %>
+    <% if (filter) { %><input type="hidden" name="filter" value="<%= filter %>"><% } %>
+    <select name="sort" onchange="this.form.submit()" class="w-full text-sm border border-gray-300 px-3 py-2 bg-white text-gray-700 focus:outline-none focus:border-blue-500">
+      <option value="popular" <%= sort === 'popular' ? 'selected' : '' %>>Popular</option>
+      <option value="new" <%= sort === 'new' ? 'selected' : '' %>>Newest</option>
+      <option value="priceLowHigh" <%= sort === 'priceLowHigh' ? 'selected' : '' %>>Price: Low to High</option>
+      <option value="priceHighLow" <%= sort === 'priceHighLow' ? 'selected' : '' %>>Price: High to Low</option>
+    </select>
+  </form>
+</div>
+
+<div class="border-t border-gray-200 my-4"></div>
+
+<!-- Filters -->
+<div>
+  <h3 class="text-sm font-bold text-gray-800 mb-3">Offers</h3>
+  <div class="flex flex-col space-y-2">
+    <a href="/shop<%= gender ? '?gender=' + gender : '' %>" class="sidebar-link <%= !filter ? 'active' : '' %>">All Products</a>
+    <a href="/shop?<%= gender ? 'gender=' + gender + '&' : '' %>filter=discounted" class="sidebar-link <%= filter === 'discounted' ? 'active' : '' %>">Discounted</a>
+  </div>
+</div>

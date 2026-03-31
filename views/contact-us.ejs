@@ -1,0 +1,132 @@
+<%- include('./partials/header') %>
+
+<div class="bg-gray-50 min-h-screen">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+    <div class="mb-6 sm:mb-8">
+      <h1 class="text-xl sm:text-2xl font-bold text-gray-900">Contact Us</h1>
+      <p class="text-sm text-gray-600 mt-1">
+        Need help with orders, payments, returns, or account issues? We are here
+        for you.
+      </p>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div class="lg:col-span-2 space-y-6">
+        <section class="bg-white rounded-lg shadow-sm">
+          <div class="border-b border-gray-200 px-4 sm:px-6 py-4">
+            <h2 class="text-base sm:text-lg font-semibold text-gray-900">
+              Support Channels
+            </h2>
+          </div>
+
+          <div class="p-4 sm:p-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div class="border border-gray-200 rounded-lg p-4">
+              <p class="text-sm font-semibold text-gray-900 mb-1">
+                Email Support
+              </p>
+              <p class="text-sm text-gray-600 mb-3">
+                Best for account, order, and refund queries.
+              </p>
+              <a
+                href="mailto:contact@scatch.com"
+                class="text-sm text-blue-600 hover:text-blue-700 font-medium"
+                >contact@scatch.com</a
+              >
+              <p class="text-xs text-gray-500 mt-3">
+                Average response time: within 24 hours
+              </p>
+            </div>
+
+            <div class="border border-gray-200 rounded-lg p-4">
+              <p class="text-sm font-semibold text-gray-900 mb-1">
+                Phone Support
+              </p>
+              <p class="text-sm text-gray-600 mb-3">
+                For urgent order and delivery assistance.
+              </p>
+              <a
+                href="tel:+1234567890"
+                class="text-sm text-blue-600 hover:text-blue-700 font-medium"
+                >+1 (234) 567-890</a
+              >
+              <p class="text-xs text-gray-500 mt-3">
+                Available: Mon - Sat, 9:00 AM - 7:00 PM
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <section class="bg-white rounded-lg shadow-sm">
+          <div class="border-b border-gray-200 px-4 sm:px-6 py-4">
+            <h2 class="text-base sm:text-lg font-semibold text-gray-900">
+              Visit Our Office
+            </h2>
+          </div>
+
+          <div class="p-4 sm:p-6">
+            <div class="bg-gray-50 border border-gray-200 rounded-lg p-4">
+              <p class="text-sm font-medium text-gray-900">
+                Scatch Customer Experience Center
+              </p>
+              <p class="text-sm text-gray-600 mt-1">
+                123 Watch St., Luxury City, State, 12345
+              </p>
+              <p class="text-xs text-gray-500 mt-3">
+                Office Hours: Monday to Friday, 10:00 AM - 6:00 PM
+              </p>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <aside class="space-y-6">
+        <section class="bg-white rounded-lg shadow-sm">
+          <div class="border-b border-gray-200 px-4 py-4">
+            <h2 class="text-base font-semibold text-gray-900">Quick Help</h2>
+          </div>
+
+          <div class="p-4 space-y-3">
+            <a
+              href="/myorders"
+              class="block text-sm text-gray-700 hover:text-gray-900 border border-gray-200 rounded-lg px-4 py-3 hover:bg-gray-50 transition"
+              >Track or manage my orders</a
+            >
+            <a
+              href="/account"
+              class="block text-sm text-gray-700 hover:text-gray-900 border border-gray-200 rounded-lg px-4 py-3 hover:bg-gray-50 transition"
+              >Update my profile and address</a
+            >
+            <a
+              href="/terms"
+              class="block text-sm text-gray-700 hover:text-gray-900 border border-gray-200 rounded-lg px-4 py-3 hover:bg-gray-50 transition"
+              >Read terms and policies</a
+            >
+          </div>
+        </section>
+
+        <section class="bg-white rounded-lg shadow-sm">
+          <div class="border-b border-gray-200 px-4 py-4">
+            <h2 class="text-base font-semibold text-gray-900">
+              Need Faster Support?
+            </h2>
+          </div>
+
+          <div class="p-4">
+            <p class="text-sm text-gray-600 mb-4">
+              Include your order ID in email or keep it ready on call for
+              quicker resolution.
+            </p>
+            <a
+              href="mailto:contact@scatch.com"
+              class="inline-block w-full text-center bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2.5 rounded-lg text-sm font-medium transition"
+            >
+              Contact Support Now
+            </a>
+          </div>
+        </section>
+      </aside>
+    </div>
+  </div>
+</div>
+
+<%- include('./partials/footer') %>

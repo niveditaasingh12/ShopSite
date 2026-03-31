@@ -1,0 +1,199 @@
+<%- include('./partials/header') %>
+
+<div class="bg-gray-50 min-h-screen">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+
+    <% if (cartIsEmpty) { %>
+      <!-- Empty Cart State -->
+      <div class="bg-white rounded-lg shadow-sm p-8 sm:p-12 text-center">
+        <svg class="w-24 h-24 mx-auto text-gray-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
+        </svg>
+        <h2 class="text-2xl sm:text-3xl font-semibold text-gray-800 mb-3">
+          Your cart is empty
+        </h2>
+        <p class="text-gray-600 mb-6">Add items to your cart to get started</p>
+        <a href="/shop" class="inline-block bg-yellow-500 hover:bg-yellow-600 text-white px-8 py-3 rounded-md font-medium">
+          Continue Shopping
+        </a>
+      </div>
+    <% } else { %>
+
+      <!-- Page Header -->
+      <div class="mb-6">
+        <h1 class="text-xl sm:text-2xl font-bold text-gray-900">Shopping Cart</h1>
+        <p class="text-sm text-gray-600 mt-1"><%= cartItems.length %> item<%= cartItems.length > 1 ? 's' : '' %> in your cart</p>
+      </div>
+
+      <!-- Main Layout: Two Columns -->
+      <div class="lg:grid lg:grid-cols-12 lg:gap-6">
+        
+        <!-- Left Column: Cart Items -->
+        <div class="lg:col-span-8 mb-6 lg:mb-0">
+          <div class="bg-white rounded-lg shadow-sm">
+            
+            <!-- Clear Cart Header -->
+            <div class="border-b border-gray-200 px-4 sm:px-6 py-4 flex justify-between items-center">
+              <h2 class="text-lg font-semibold text-gray-800">Cart Items</h2>
+              <a href="/clearcart" class="text-sm text-red-600 hover:text-red-700 font-medium">
+                Clear Cart
+              </a>
+            </div>
+
+            <!-- Cart Items List -->
+            <div class="divide-y divide-gray-200">
+              <% cartItems.forEach(item => { %>
+                <div class="p-4 sm:p-6">
+                  <div class="flex gap-4 sm:gap-6">
+                    
+                    <!-- Product Image -->
+                    <div class="shrink-0">
+                      <img src="<%= item.image %>" alt="<%= item.name %>" class="w-20 h-20 sm:w-28 sm:h-28 object-cover rounded-md border border-gray-200">
+                    </div>
+
+                    <!-- Product Details -->
+                    <div class="flex-1 min-w-0">
+                      <div class="flex justify-between">
+                        <div class="flex-1">
+                          <h3 class="text-base sm:text-lg font-medium text-gray-900 mb-2">
+                            <%= item.name %>
+                          </h3>
+                          
+                          <% if (item.size) { %>
+                            <p class="text-sm text-gray-600 mb-2">Size: <span class="font-medium"><%= item.size %></span></p>
+                          <% } %>
+
+                          <!-- Price Details -->
+                          <div class="space-y-1 mb-3">
+                            <div class="flex items-center gap-3">
+                              <span class="text-lg sm:text-xl font-semibold text-gray-900">₹<%= item.netTotal.toFixed(2) %></span>
+                              <% if (item.discount > 0) { %>
+                                <span class="text-sm text-gray-500 line-through">₹<%= (item.price * item.quantity).toFixed(2) %></span>
+                                <span class="text-sm text-green-600 font-medium"><%= item.discount %>% off</span>
+                              <% } %>
+                            </div>
+                            <% if (item.discount > 0) { %>
+                              <p class="text-sm text-green-600">You save ₹<%= item.discountAmount.toFixed(2) %></p>
+                            <% } %>
+                          </div>
+
+                          <!-- Quantity Controls -->
+                          <div class="flex items-center gap-4 flex-wrap">
+                            <div class="flex items-center border border-gray-300 rounded-md">
+                              <button class="decrease px-3 sm:px-4 py-2 hover:bg-gray-100 text-gray-700 font-medium" data-productid="<%= item._id %>" data-size="<%= item.size || '' %>">
+                                −
+                              </button>
+                              <span class="px-4 sm:px-6 py-2 text-sm font-medium border-x border-gray-300">
+                                <%= item.quantity %>
+                              </span>
+                              <button class="increase px-3 sm:px-4 py-2 hover:bg-gray-100 text-gray-700 font-medium" data-productid="<%= item._id %>" data-size="<%= item.size || '' %>">
+                                +
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              <% }) %>
+            </div>
+
+            <!-- Continue Shopping Button (Mobile) -->
+            <div class="border-t border-gray-200 p-4 sm:p-6 lg:hidden">
+              <a href="/shop" class="block w-full text-center bg-gray-100 hover:bg-gray-200 text-gray-800 px-6 py-3 rounded-md font-medium">
+                Continue Shopping
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Column: Price Summary -->
+        <div class="lg:col-span-4">
+          <div class="bg-white rounded-lg shadow-sm sticky top-6">
+            <div class="p-4 sm:p-6">
+              <h2 class="text-lg font-semibold text-gray-800 mb-4 pb-4 border-b border-gray-200">
+                Price Details
+              </h2>
+
+              <div class="space-y-3 mb-4">
+                <div class="flex justify-between text-sm sm:text-base">
+                  <span class="text-gray-700">Price (<%= cartItems.reduce((sum, item) => sum + item.quantity, 0) %> items)</span>
+                  <span class="text-gray-900">₹<%= cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0).toFixed(2) %></span>
+                </div>
+
+                <% 
+                  const totalDiscount = cartItems.reduce((sum, item) => sum + item.discountAmount, 0);
+                  if (totalDiscount > 0) { 
+                %>
+                  <div class="flex justify-between text-sm sm:text-base text-green-600">
+                    <span>Discount</span>
+                    <span>−₹<%= totalDiscount.toFixed(2) %></span>
+                  </div>
+                <% } %>
+
+                <div class="flex justify-between text-sm sm:text-base">
+                  <span class="text-gray-700">Delivery Charges</span>
+                  <span class="text-green-600 font-medium">FREE</span>
+                </div>
+              </div>
+
+              <div class="border-t border-gray-200 pt-4 mb-6">
+                <div class="flex justify-between items-center">
+                  <span class="text-base sm:text-lg font-semibold text-gray-900">Total Amount</span>
+                  <span class="text-xl sm:text-2xl font-semibold text-gray-900">₹<%= bill.toFixed(2) %></span>
+                </div>
+                <% if (totalDiscount > 0) { %>
+                  <p class="text-sm text-green-600 mt-2">You will save ₹<%= totalDiscount.toFixed(2) %> on this order</p>
+                <% } %>
+              </div>
+
+              <!-- Checkout Button -->
+              <a href="/checkout" class="block w-full bg-yellow-500 hover:bg-yellow-600 text-white text-center px-6 py-3 rounded-md font-semibold text-base sm:text-lg mb-3">
+                Proceed to Checkout
+              </a>
+
+              <!-- Continue Shopping (Desktop) -->
+              <a href="/shop" class="hidden lg:block w-full text-center bg-gray-100 hover:bg-gray-200 text-gray-800 px-6 py-3 rounded-md font-medium">
+                Continue Shopping
+              </a>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <% } %>
+  </div>
+</div>
+
+<!-- Quantity Update Script -->
+<script>
+  document.querySelectorAll('.increase').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const productId = btn.dataset.productid;
+      const size = btn.dataset.size;
+      const res = await fetch(`/cart/increase/${productId}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ size }),
+      });
+      if (res.ok) location.reload();
+    });
+  });
+
+  document.querySelectorAll('.decrease').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const productId = btn.dataset.productid;
+      const size = btn.dataset.size;
+      const res = await fetch(`/cart/decrease/${productId}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ size }),
+      });
+      if (res.ok) location.reload();
+    });
+  });
+</script>
+
+<%- include('./partials/footer') %>

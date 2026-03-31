@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Owner Login - Scatch</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/tailwind.css">
+    <style>
+        body {
+            font-family: "Poppins", sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <div class="min-h-screen flex items-center justify-center px-4 py-12">
+        <div class="w-full max-w-md">
+            <!-- Header -->
+            <div class="text-center mb-8">
+                <a href="/" class="inline-block mb-6">
+                    <span class="text-4xl font-bold tracking-tight">
+                        <span class="text-yellow-500">Sca</span><span class="text-gray-900">tch</span>
+                    </span>
+                </a>
+                <h1 class="text-3xl font-bold text-gray-900 mb-2">Owner Login</h1>
+                <p class="text-gray-600">Manage your store and sales</p>
+            </div>
+
+            <!-- Card -->
+            <div class="bg-white border border-gray-200 p-10 shadow-sm rounded-xl">
+                <!-- Alerts -->
+                <% if (error && error.length > 0) { %>
+                    <div class="bg-red-50 border-l-4 border-red-500 p-4 mb-6">
+                        <% error.forEach(e => { %>
+                            <p class="text-red-700 text-sm"><%= e %></p>
+                        <% }) %>
+                    </div>
+                <% } %>
+
+                <% if (success && success.length > 0) { %>
+                    <div class="bg-green-50 border-l-4 border-green-500 p-4 mb-6">
+                        <% success.forEach(s => { %>
+                            <p class="text-green-700 text-sm"><%= s %></p>
+                        <% }) %>
+                    </div>
+                <% } %>
+
+                <!-- Form -->
+                <form method="POST" action="/owners/login" class="space-y-6" autocomplete="off">
+                    <input type="text" name="fakeusernameremembered" id="fakeusernameremembered_owner" style="display:none" autocomplete="off" />
+                    <input type="password" name="fakepasswordremembered" id="fakepasswordremembered_owner" style="display:none" autocomplete="off" />
+                    <div>
+                        <label for="email" class="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
+                        <input 
+                            type="email" 
+                            id="email" 
+                            name="email" 
+                            placeholder="Enter your email"
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+                            autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
+                            value=""
+                            required 
+                        />
+                    </div>
+
+                    <div>
+                        <label for="password" class="block text-sm font-medium text-gray-700 mb-2">Password</label>
+                        <input 
+                            type="password" 
+                            id="password" 
+                            name="password" 
+                            placeholder="Enter your password"
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
+                            autocomplete="new-password" autocorrect="off" autocapitalize="off" spellcheck="false"
+                            value=""
+                            required 
+                        />
+                    </div>
+
+                    <button 
+                        type="submit"
+                        class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg transition duration-200"
+                    >
+                        Sign In
+                    </button>
+                </form>
+                <p class="text-center text-sm text-gray-600 mt-6">
+                    <span>Don't have a store?</span>
+                    &nbsp;
+                    <a href="/owners/register" class="text-blue-600 hover:text-blue-700 font-medium">Create store</a>
+                </p>
+            </div>
+
+            <!-- Footer -->
+            <p class="text-center text-gray-600 text-sm mt-8">
+                Need help? <a href="/" class="text-blue-600 hover:text-blue-700 font-medium">Contact Support</a>
+            </p>
+        </div>
+    </div>
+    <script>
+        // Clear possible browser autofill values on page load so owner fields are empty
+        window.addEventListener('DOMContentLoaded', () => {
+            const email = document.getElementById('email');
+            const password = document.getElementById('password');
+            try {
+                if (email) email.value = '';
+                if (password) password.value = '';
+            } catch (e) {
+                // ignore
+            }
+        });
+    </script>
+</body>
+</html>

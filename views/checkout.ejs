@@ -1,0 +1,169 @@
+<%- include('./partials/header') %>
+
+<div class="bg-gray-50 min-h-screen">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+
+    <!-- Page Header -->
+    <div class="mb-6 flex justify-between items-center">
+      <div>
+        <h1 class="text-xl sm:text-2xl font-bold text-gray-900">Checkout</h1>
+        <p class="text-sm text-gray-600 mt-1"><%= cartItems.length %> item<%= cartItems.length > 1 ? 's' : '' %> in your cart</p>
+      </div>
+      <a href="/cart" class="text-sm text-blue-600 hover:text-blue-700 font-medium">
+        ← Back to Cart
+      </a>
+    </div>
+
+    <form action="/confirm-cart-order" method="POST">
+      <!-- Main Layout: Two Columns -->
+      <div class="lg:grid lg:grid-cols-12 lg:gap-6">
+        
+        <!-- Left Column: Delivery Address & Cart Items -->
+        <div class="lg:col-span-8 space-y-6 mb-6 lg:mb-0">
+          
+          <!-- Delivery Address Section -->
+          <div class="bg-white rounded-lg shadow-sm">
+            <div class="border-b border-gray-200 px-4 sm:px-6 py-4">
+              <h2 class="text-lg font-semibold text-gray-800">Delivery Address</h2>
+            </div>
+            
+            <div class="p-4 sm:p-6">
+              <% if (addresses.length === 0) { %>
+                <!-- No Address State -->
+                <div class="text-center py-6">
+                  <svg class="w-16 h-16 mx-auto text-gray-300 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                  </svg>
+                  <p class="text-red-600 font-medium mb-4">No saved addresses found</p>
+                  <a href="/account/addresses/new?redirect=/checkout" class="inline-block bg-yellow-500 hover:bg-yellow-600 text-white px-6 py-2.5 rounded-md font-medium">
+                    Add Delivery Address
+                  </a>
+                </div>
+              <% } else { %>
+                <!-- Address Selection -->
+                <div class="space-y-4">
+                  <select name="addressId" required class="w-full px-4 py-3 border border-gray-300 rounded-lg text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-yellow-500 bg-gray-50">
+                    <% addresses.forEach(address => { %>
+                      <option value="<%= address._id %>" <%= address._id.toString() === defaultAddressId ? "selected" : "" %>>
+                        <%= address.line1 %>, <%= address.city %>, <%= address.state %> - <%= address.pincode %>
+                        <% if (address._id.toString() === defaultAddressId) { %> (Default)<% } %>
+                      </option>
+                    <% }) %>
+                  </select>
+                  
+                  <a href="/account/addresses/new?redirect=/checkout" class="inline-flex items-center gap-2 text-sm text-blue-600 hover:text-blue-700 font-medium">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                    </svg>
+                    Add New Address
+                  </a>
+                </div>
+              <% } %>
+            </div>
+          </div>
+
+          <!-- Cart Items Section -->
+          <div class="bg-white rounded-lg shadow-sm">
+            <div class="border-b border-gray-200 px-4 sm:px-6 py-4">
+              <h2 class="text-lg font-semibold text-gray-800">Order Items</h2>
+            </div>
+
+            <!-- Cart Items List -->
+            <div class="divide-y divide-gray-200">
+              <% cartItems.forEach(item => { %>
+                <div class="p-4 sm:p-6">
+                  <div class="flex gap-4 sm:gap-6">
+                    
+                    <!-- Product Image -->
+                    <div class="shrink-0">
+                      <img src="<%= item.product.image %>" alt="<%= item.product.name %>" class="w-20 h-20 sm:w-24 sm:h-24 object-cover rounded-md border border-gray-200">
+                    </div>
+
+                    <!-- Product Details -->
+                    <div class="flex-1 min-w-0">
+                      <h3 class="text-base sm:text-lg font-medium text-gray-900 mb-2">
+                        <%= item.product.name %>
+                      </h3>
+                      
+                      <div class="space-y-1 mb-2">
+                        <p class="text-sm text-gray-600">Quantity: <span class="font-medium"><%= item.quantity %></span></p>
+                        <% if (item.size) { %>
+                          <p class="text-sm text-gray-600">Size: <span class="font-medium"><%= item.size %></span></p>
+                        <% } %>
+                      </div>
+
+                      <!-- Price Details -->
+                      <div class="space-y-1">
+                        <div class="flex items-center gap-3">
+                          <span class="text-base sm:text-lg font-semibold text-gray-900">₹<%= item.netTotal.toFixed(2) %></span>
+                          <% if (item.discount > 0) { %>
+                            <span class="text-sm text-gray-500 line-through">₹<%= (item.product.price * item.quantity).toFixed(2) %></span>
+                            <span class="text-sm text-green-600 font-medium"><%= item.discount %>% off</span>
+                          <% } %>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              <% }) %>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Right Column: Price Summary -->
+        <div class="lg:col-span-4">
+          <div class="bg-white rounded-lg shadow-sm sticky top-6">
+            <div class="p-4 sm:p-6">
+              <h2 class="text-lg font-semibold text-gray-800 mb-4 pb-4 border-b border-gray-200">
+                Price Details
+              </h2>
+
+              <div class="space-y-3 mb-4">
+                <div class="flex justify-between text-sm sm:text-base">
+                  <span class="text-gray-700">Price (<%= cartItems.reduce((sum, item) => sum + item.quantity, 0) %> items)</span>
+                  <span class="text-gray-900">₹<%= (totalAmount - platformFee - shippingFee).toFixed(2) %></span>
+                </div>
+
+                <div class="flex justify-between text-sm sm:text-base">
+                  <span class="text-gray-700">Platform Fee</span>
+                  <span class="text-gray-900">₹<%= platformFee.toFixed(2) %></span>
+                </div>
+
+                <div class="flex justify-between text-sm sm:text-base">
+                  <span class="text-gray-700">Delivery Charges</span>
+                  <% if (shippingFee === 0) { %>
+                    <span class="text-green-600 font-medium">FREE</span>
+                  <% } else { %>
+                    <span class="text-gray-900">₹<%= shippingFee.toFixed(2) %></span>
+                  <% } %>
+                </div>
+              </div>
+
+              <div class="border-t border-gray-200 pt-4 mb-6">
+                <div class="flex justify-between items-center">
+                  <span class="text-base sm:text-lg font-semibold text-gray-900">Total Amount</span>
+                  <span class="text-xl sm:text-2xl font-semibold text-gray-900">₹<%= totalAmount.toFixed(2) %></span>
+                </div>
+              </div>
+
+              <!-- Continue Button -->
+              <button type="submit" class="block w-full bg-yellow-500 hover:bg-yellow-600 text-white text-center px-6 py-3 rounded-md font-semibold text-base sm:text-lg <%= addresses.length === 0 ? 'cursor-not-allowed opacity-50' : '' %>" <%= addresses.length === 0 ? 'disabled' : '' %>>
+                Continue to Payment
+              </button>
+
+              <% if (addresses.length === 0) { %>
+                <p class="text-xs text-red-600 text-center mt-2">Please add a delivery address to continue</p>
+              <% } %>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </form>
+
+  </div>
+</div>
+
+<%- include('./partials/footer') %>

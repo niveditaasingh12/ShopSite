@@ -1,0 +1,83 @@
+<%- include('./partials/header') %>
+
+<div class="max-w-4xl mx-auto py-10">
+  <h2 class="text-2xl font-semibold mb-6">Checkout</h2>
+
+  <!-- Address Display -->
+  <div class="bg-white p-5 rounded shadow mb-6">
+    <h3 class="text-lg font-semibold mb-2">Deliver To:</h3>
+    <p class="text-gray-700">
+      <% orders.forEach(order => { %>
+  <div class="bg-white shadow p-4 mb-6 rounded">
+    <h3 class="text-lg font-semibold mb-2">Deliver To:</h3>
+    <p class="text-gray-700">
+      <%= order.address.fullname %>, 
+      <%= order.address.address %>, 
+      <%= order.address.city %> - 
+      <%= order.address.pincode %>
+    </p>
+
+    <!-- Optional: Add order.product list -->
+    <div class="mt-3">
+      <% order.products.forEach(item => { %>
+        <p><%= item.product.name %> × <%= item.quantity %></p>
+      <% }) %>
+    </div>
+
+    <p class="mt-2"><strong>Total:</strong> ₹<%= order.totalAmount %></p>
+  </div>
+<% }) %>
+
+    </p>
+  </div>
+
+  <!-- Product Summary -->
+  <div class="bg-white p-5 rounded shadow mb-6">
+    <h3 class="text-lg font-semibold mb-4">Your Items</h3>
+    <ul class="divide-y">
+      <% products.forEach(item => { %>
+        <li class="py-3 flex justify-between">
+          <div>
+            <p class="font-medium"><%= item.product.name %></p>
+            <p class="text-sm text-gray-500">Qty: <%= item.quantity %></p>
+          </div>
+          <div class="text-right">
+            <p>₹ <%= item.product.price * item.quantity %></p>
+            <% if (item.product.discount > 0) { %>
+              <p class="text-xs text-green-600">You saved ₹ <%= Math.floor(item.product.price * (item.product.discount / 100)) * item.quantity %></p>
+            <% } %>
+          </div>
+        </li>
+      <% }) %>
+    </ul>
+    <div class="mt-4 text-right font-semibold">
+      Total: ₹<%= totalAmount %>
+    </div>
+  </div>
+
+  <!-- Payment Options -->
+  <form action="/place-order" method="POST" class="bg-white p-5 rounded shadow">
+    <h3 class="text-lg font-semibold mb-4">Select Payment Method</h3>
+
+    <input type="hidden" name="addressId" value="<%= address._id %>">
+
+    <div class="space-y-3">
+      <label class="flex items-center space-x-3">
+        <input type="radio" name="paymentMethod" value="UPI" required class="accent-rose-600">
+        <span>Pay using UPI</span>
+      </label>
+
+      <label class="flex items-center space-x-3">
+        <input type="radio" name="paymentMethod" value="COD" required class="accent-rose-600">
+        <span>Cash on Delivery</span>
+      </label>
+    </div>
+
+    <button type="submit"
+      class="mt-6 w-full bg-rose-600 text-white py-2 rounded hover:bg-rose-700 transition">
+      Place Order
+    </button>
+  </form>
+</div>
+
+<%- include('./partials/footer') %>

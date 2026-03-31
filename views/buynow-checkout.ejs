@@ -1,0 +1,335 @@
+﻿<%- include('./partials/header') %>
+
+<div class="bg-gray-50 min-h-screen">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+
+    <!-- Page Header -->
+    <div class="mb-6 flex justify-between items-center">
+      <div>
+        <h1 class="text-xl sm:text-2xl font-bold text-gray-900">Buy Now Checkout</h1>
+        <p class="text-sm text-gray-600 mt-1">Complete your purchase</p>
+      </div>
+      <a href="/shop" class="text-sm text-red-600 hover:text-red-700 font-medium">Cancel Order</a>
+    </div>
+
+    <% if (error && error.length > 0) { %>
+      <div class="fixed top-24 right-4 sm:right-auto sm:left-1/2 sm:-translate-x-1/2 z-50 bg-yellow-500 text-gray-900 px-3 sm:px-5 py-1.5 sm:py-2 rounded shadow-lg max-w-xs flex items-center justify-between gap-2">
+        <span class="text-xs sm:text-sm font-semibold flex-1"><%= error[0] %></span>
+        <button type="button" onclick="this.parentElement.remove()" class="text-gray-900 hover:text-gray-700 font-bold text-lg shrink-0 ml-1">&times;</button>
+      </div>
+    <% } %>
+
+    <% if (success && success.length > 0) { %>
+      <div class="fixed top-24 right-4 sm:right-auto sm:left-1/2 sm:-translate-x-1/2 z-50 bg-yellow-500 text-gray-900 px-3 sm:px-5 py-1.5 sm:py-2 rounded shadow-lg max-w-xs flex items-center justify-between gap-2">
+        <span class="text-xs sm:text-sm font-semibold flex-1"><%= success[0] %></span>
+        <button type="button" onclick="this.parentElement.remove()" class="text-gray-900 hover:text-gray-700 font-bold text-lg shrink-0 ml-1">&times;</button>
+      </div>
+    <% } %>
+
+    <!-- Client-side Error Message -->
+    <div id="client-error" class="hidden fixed top-24 right-4 sm:right-auto sm:left-1/2 sm:-translate-x-1/2 z-50 bg-yellow-500 text-gray-900 px-3 sm:px-5 py-1.5 sm:py-2 rounded shadow-lg max-w-xs text-xs sm:text-sm font-semibold"></div>
+
+    <form method="POST" action="/buynow/place-order" id="buyNowForm">
+      <input type="hidden" name="productId" value="<%= product._id %>" id="productIdHidden">
+      <input type="hidden" name="size" value="<%= selectedSize || '' %>" id="sizeHidden">
+
+      <!-- Main Layout: Two Columns -->
+      <div class="lg:grid lg:grid-cols-12 lg:gap-6">
+
+        <!-- Left Column: Address & Items -->
+        <div class="lg:col-span-8 space-y-6 mb-6 lg:mb-0">
+
+          <!-- Delivery Address Section -->
+          <div class="bg-white rounded-lg shadow-sm">
+            <div class="border-b border-gray-200 px-4 sm:px-6 py-4">
+              <h2 class="text-lg font-semibold text-gray-800">Delivery Address</h2>
+            </div>
+
+            <div class="p-4 sm:p-6">
+              <% if (addresses.length === 0) { %>
+                <!-- No Address State -->
+                <div class="text-center py-6">
+                  <svg class="w-16 h-16 mx-auto text-gray-300 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                  </svg>
+                  <p class="text-red-600 font-medium mb-4">No saved addresses found</p>
+                  <a href="/account/addresses/new?redirect=/buynow/<%= product._id %><%= selectedSize ? '?size=' + selectedSize : '' %>" class="inline-block bg-yellow-500 hover:bg-yellow-600 text-white px-6 py-2.5 rounded-md font-medium">
+                    Add Delivery Address
+                  </a>
+                </div>
+              <% } else { %>
+                <!-- Address Selection -->
+                <div class="space-y-4">
+                  <select name="addressId" required class="w-full px-4 py-3 border border-gray-300 rounded-lg text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-yellow-500 bg-gray-50">
+                    <% addresses.forEach(address => { %>
+                      <option value="<%= address._id %>" <%= address._id.toString() === defaultAddressId ? "selected" : "" %>>
+                        <%= address.line1 %>, <%= address.city %>, <%= address.state %> - <%= address.pincode %>
+                        <% if (address._id.toString() === defaultAddressId) { %> (Default)<% } %>
+                      </option>
+                    <% }) %>
+                  </select>
+                  
+                  <a href="/account/addresses/new?redirect=/buynow/<%= product._id %><%= selectedSize ? '?size=' + selectedSize : '' %>" class="inline-flex items-center gap-2 text-sm text-blue-600 hover:text-blue-700 font-medium">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                    </svg>
+                    Add New Address
+                  </a>
+                </div>
+              <% } %>
+            </div>
+          </div>
+
+          <!-- Order Items Section -->
+          <div class="bg-white rounded-lg shadow-sm">
+            <div class="border-b border-gray-200 px-4 sm:px-6 py-4">
+              <h2 class="text-lg font-semibold text-gray-800">Order Items</h2>
+            </div>
+
+            <div class="p-4 sm:p-6">
+              <div class="flex gap-4 sm:gap-6">
+                
+                <!-- Product Image -->
+                <div class="shrink-0">
+                  <img src="<%= product.image %>" alt="<%= product.name %>" class="w-20 h-20 sm:w-24 sm:h-24 object-cover rounded-md border border-gray-200">
+                </div>
+
+                <!-- Product Details -->
+                <div class="flex-1 min-w-0">
+                  <h3 class="text-base sm:text-lg font-medium text-gray-900 mb-2">
+                    <%= product.name %>
+                  </h3>
+                  
+                  <div class="space-y-1 mb-2">
+                    <p class="text-sm text-gray-600">Quantity: <span class="font-medium"><span id="displayQuantity">1</span></span></p>
+                    <% if (selectedSize) { %>
+                      <p class="text-sm text-gray-600">Size: <span class="font-medium"><%= selectedSize %></span></p>
+                    <% } %>
+                  </div>
+
+                  <!-- Price Details -->
+                  <div class="space-y-1">
+                    <div class="flex items-center gap-3">
+                      <span class="text-base sm:text-lg font-semibold text-gray-900">₹<span id="displayItemTotal"><%= (product.price - (product.price * (product.discount / 100))).toFixed(2) %></span></span>
+                      <% if (product.discount > 0) { %>
+                        <span class="text-sm text-gray-500 line-through">₹<%= product.price.toFixed(2) %></span>
+                        <span class="text-sm text-green-600 font-medium"><%= product.discount %>% off</span>
+                      <% } %>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Quantity Input -->
+              <div class="flex items-center gap-2 mt-4 pt-4 border-t border-gray-200">
+                <label for="quantity" class="text-sm text-gray-700">Quantity:</label>
+                <input
+                  type="number"
+                  id="quantity"
+                  name="quantity"
+                  value="1"
+                  min="1"
+                  class="w-16 border border-gray-300 rounded-md px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-yellow-400"
+                  required
+                />
+              </div>
+            </div>
+          </div>
+
+          <!-- Payment Method Section -->
+          <div class="bg-white rounded-lg shadow-sm">
+            <div class="border-b border-gray-200 px-4 sm:px-6 py-4">
+              <h2 class="text-lg font-semibold text-gray-800">Payment Method</h2>
+            </div>
+
+            <div class="p-4 sm:p-6">
+              <div class="space-y-3 mb-6">
+                <label class="flex items-center gap-3 border border-gray-300 p-3 sm:p-4 rounded-lg cursor-pointer">
+                  <input type="radio" name="paymentMethod" value="COD" checked class="accent-yellow-500 w-4 h-4" id="paymentCOD">
+                  <span class="text-sm sm:text-base font-medium text-gray-800">Cash on Delivery (COD)</span>
+                </label>
+              </div>
+
+              <div id="codButtonDiv" class="block">
+                <button type="submit" id="codBtn" class="w-full bg-yellow-500 hover:bg-yellow-600 text-white px-6 py-3 rounded-lg font-semibold text-base sm:text-lg">
+                  Place Order with COD
+                </button>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Right Column: Price Summary -->
+        <div class="lg:col-span-4">
+          <div class="bg-white rounded-lg shadow-sm sticky top-6">
+            <div class="p-4 sm:p-6">
+              <h2 class="text-lg font-semibold text-gray-800 mb-4 pb-4 border-b border-gray-200">
+                Price Details
+              </h2>
+
+              <div class="space-y-3 mb-4">
+                <div class="flex justify-between text-sm sm:text-base">
+                  <span class="text-gray-700">Price (<span id="billQuantity">1</span> item<span id="itemsPlural">s</span>)</span>
+                  <span class="text-gray-900">₹<span id="basePrice"><%= product.price %></span></span>
+                </div>
+
+                <% if(product.discount > 0) { %>
+                <div class="flex justify-between text-sm sm:text-base text-green-600">
+                  <span>Discount (<%= product.discount %>%)</span>
+                  <span>-₹<span id="discountAmount"><%= (product.price * (product.discount / 100)).toFixed(2) %></span></span>
+                </div>
+                <% } %>
+
+                <div class="flex justify-between text-sm sm:text-base">
+                  <span class="text-gray-700">Item Total</span>
+                  <span class="text-gray-900">₹<span id="itemTotal"><%= (product.price - (product.price * (product.discount / 100))).toFixed(2) %></span></span>
+                </div>
+
+                <div class="flex justify-between text-sm sm:text-base">
+                  <span class="text-gray-700">Delivery Charges</span>
+                  <span class="text-gray-900">₹<span id="shippingFee">49</span></span>
+                </div>
+              </div>
+
+              <div class="border-t border-gray-200 pt-4 mb-6">
+                <div class="flex justify-between items-center">
+                  <span class="text-base sm:text-lg font-semibold text-gray-900">Total Amount</span>
+                  <span class="text-xl sm:text-2xl font-semibold text-gray-900">₹<span id="totalAmount"><%= (product.price - (product.price * (product.discount / 100)) + 49).toFixed(2) %></span></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </form>
+
+  </div>
+</div>
+
+<%- include('./partials/footer') %>
+
+<script>
+  const buyNowForm = document.getElementById("buyNowForm");
+  const addressSelect = document.querySelector('select[name="addressId"]');
+  const errorBox = document.getElementById("client-error");
+  const codBtn = document.getElementById('codBtn');
+
+  // Product pricing constants
+  const unitPrice = <%= product.price %>;
+  const discount = <%= product.discount || 0 %>;
+  const shippingFee = 49;
+
+  // Bill calculation elements
+  const quantityInput = document.getElementById('quantity');
+  const billQuantitySpan = document.getElementById('billQuantity');
+  const basePriceSpan = document.getElementById('basePrice');
+  const discountAmountSpan = document.getElementById('discountAmount');
+  const itemTotalSpan = document.getElementById('itemTotal');
+  const totalAmountSpan = document.getElementById('totalAmount');
+  const displayQuantitySpan = document.getElementById('displayQuantity');
+  const displayItemTotalSpan = document.getElementById('displayItemTotal');
+  const itemsPluralSpan = document.getElementById('itemsPlural');
+
+  // Function to update bill details
+  function updateBillDetails() {
+    const quantity = parseInt(quantityInput.value) || 1;
+    const basePrice = unitPrice * quantity;
+    const discountAmount = (basePrice * (discount / 100)).toFixed(2);
+    const itemTotal = (basePrice - discountAmount).toFixed(2);
+    const total = (parseFloat(itemTotal) + shippingFee).toFixed(2);
+
+    // Update price summary
+    billQuantitySpan.textContent = quantity;
+    basePriceSpan.textContent = basePrice;
+    if (discountAmountSpan) discountAmountSpan.textContent = discountAmount;
+    itemTotalSpan.textContent = itemTotal;
+    totalAmountSpan.textContent = total;
+
+    // Update order items display
+    if (displayQuantitySpan) displayQuantitySpan.textContent = quantity;
+    if (displayItemTotalSpan) displayItemTotalSpan.textContent = itemTotal;
+    if (itemsPluralSpan) itemsPluralSpan.textContent = quantity === 1 ? '' : 's';
+  }
+
+  // Update bill details when quantity changes
+  quantityInput.addEventListener('input', updateBillDetails);
+  quantityInput.addEventListener('change', updateBillDetails);
+
+  // Handle COD form submission
+  buyNowForm.addEventListener("submit", function (e) {
+    // Prevent default form submission for all methods
+    e.preventDefault();
+    
+    // Validate address
+    if (!addressSelect || !addressSelect.value) {
+      errorBox.textContent = "❌ Please select an address before continuing.";
+      errorBox.classList.remove("hidden");
+      errorBox.scrollIntoView({ behavior: 'smooth' });
+      return;
+    }
+
+    handleCODPayment();
+  });
+
+  // Handle COD payment
+  async function handleCODPayment() {
+    const productId = document.getElementById('productIdHidden').value;
+    const size = document.getElementById('sizeHidden').value;
+    const quantity = parseInt(document.getElementById('quantity').value);
+    const addressId = addressSelect.value;
+
+    // Validate quantity
+    if (!quantity || quantity < 1) {
+      errorBox.textContent = "❌ Please enter a valid quantity.";
+      errorBox.classList.remove("hidden");
+      return;
+    }
+
+    try {
+      const response = await fetch('/buynow/place-order', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          productId: productId,
+          quantity: quantity,
+          size: size || null,
+          addressId: addressId,
+          paymentMethod: 'COD'
+        })
+      });
+
+      const data = await response.json();
+
+      if (!data.success) {
+        errorBox.textContent = data.message || '❌ Failed to place order. Please try again.';
+        errorBox.classList.remove("hidden");
+        errorBox.scrollIntoView({ behavior: 'smooth' });
+        return;
+      }
+
+      // Success! Redirect to order success page
+      console.log('✅ COD Order placed successfully:', data.orderId);
+      errorBox.textContent = '✅ Order placed successfully! Redirecting...';
+      errorBox.classList.remove("hidden");
+      setTimeout(() => {
+        window.location.href = `/order-success/${data.orderId}`;
+      }, 1000);
+    } catch (error) {
+      console.error('❌ COD Payment Error:', error);
+      errorBox.textContent = '❌ An error occurred while placing order. Please try again.';
+      errorBox.classList.remove("hidden");
+      errorBox.scrollIntoView({ behavior: 'smooth' });
+    }
+  }
+
+  codBtn.addEventListener('click', function (e) {
+    // The form submission is handled by buyNowForm event listener
+    // This button just submits the form, which will call handleCODPayment
+  });
+</script>

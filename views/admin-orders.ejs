@@ -1,0 +1,93 @@
+
+
+<%- include('./adminpartials/header.ejs') %>
+<div class="px-6 py-8 lg:px-20 font-sans">
+  <h2 class="text-2xl font-bold mb-6">Admin - Manage Orders</h2>
+
+  <% if (success && success.length > 0) { %>
+    <div id="flash-success" class="fixed top-24 right-4 sm:right-auto sm:left-1/2 sm:-translate-x-1/2 z-50 bg-yellow-500 text-gray-900 px-3 sm:px-5 py-1.5 sm:py-2 rounded shadow-lg max-w-xs flex items-center justify-between gap-2">
+      <span class="text-xs sm:text-sm font-semibold flex-1"><%= success[0] %></span>
+      <button type="button" onclick="this.parentElement.remove()" class="text-gray-900 hover:text-gray-700 font-bold text-lg shrink-0 ml-1">&times;</button>
+    </div>
+  <% } %>
+
+  <% if (error && error.length > 0) { %>
+    <div id="flash-error" class="fixed top-24 right-4 sm:right-auto sm:left-1/2 sm:-translate-x-1/2 z-50 bg-yellow-500 text-gray-900 px-3 sm:px-5 py-1.5 sm:py-2 rounded shadow-lg max-w-xs flex items-center justify-between gap-2">
+      <span class="text-xs sm:text-sm font-semibold flex-1"><%= error[0] %></span>
+      <button type="button" onclick="this.parentElement.remove()" class="text-gray-900 hover:text-gray-700 font-bold text-lg shrink-0 ml-1">&times;</button>
+    </div>
+  <% } %>
+
+  <% if (ordersByUser.length === 0) { %>
+    <p>No orders found.</p>
+  <% } else { %>
+    <% ordersByUser.forEach(group => { %>
+      <div class="mb-10">
+        <h3 class="text-xl font-bold mb-4 border-b pb-2">
+          User: <%= group.user.fullname %> (<%= group.user.email %>)
+        </h3>
+
+        <% group.orders.forEach(order => { %>
+          <div class="bg-white rounded-xl shadow p-6 border border-gray-200 mb-6">
+            <p class="mb-1 text-sm text-gray-500">Order ID: <%= order._id %></p>
+            <p class="mb-1"><strong>Total Amount:</strong> ₹<%= order.totalAmount %></p>
+            <p class="mb-1"><strong>Payment:</strong> <%= order.paymentMethod %></p>
+            <p class="mb-1"><strong>Current Status:</strong> 
+              <span class="<%= order.status === 'Cancelled' ? 'text-red-600' : order.status === 'Delivered' ? 'text-green-600' : 'text-yellow-600' %>">
+                <%= order.status %>
+              </span>
+            </p>
+
+            <form method="POST" action="/admin/orders/<%= order._id %>/status" class="mt-4">
+              <label class="block mb-1 font-medium text-sm">Update Status:</label>
+              <div class="flex items-center gap-3">
+                <select name="status" class="border p-2 rounded w-52">
+                  <option value="Placed" <%= order.status === "Placed" ? "selected" : "" %>>Placed</option>
+                  <option value="Shipped" <%= order.status === "Shipped" ? "selected" : "" %>>Shipped</option>
+                  <option value="Delivered" <%= order.status === "Delivered" ? "selected" : "" %>>Delivered</option>
+                  <option value="Cancelled" <%= order.status === "Cancelled" ? "selected" : "" %>>Cancelled</option>
+                </select>
+                <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                  Update
+                </button>
+              </div>
+            </form>
+
+            <div class="mt-5">
+              <h4 class="font-semibold mb-2">Items:</h4>
+              <% order.products.forEach(item => { %>
+                <div class="flex items-center gap-4 mb-3">
+                  <% if (item.product) { %>
+                  <img src="<%= item.product.image %>" alt="item" class="w-14 h-14 border rounded object-cover" />
+                  <div>
+                    <p class="font-medium"><%= item.product.name %></p>
+                    <p class="text-sm text-gray-500">Quantity: <%= item.quantity %></p>
+                  </div>
+                  <% } else { %>
+                  <div class="w-14 h-14 border rounded bg-gray-100 flex items-center justify-center text-xs text-gray-400">N/A</div>
+                  <div>
+                    <p class="font-medium text-gray-400 italic">Product Deleted</p>
+                    <p class="text-sm text-gray-400">Quantity: <%= item.quantity %></p>
+                  </div>
+                  <% } %>
+                </div>
+              <% }) %>
+            </div>
+          </div>
+        <% }) %>
+      </div>
+    <% }) %>
+  <% } %>
+</div>
+
+<script>
+  setTimeout(() => {
+    const successMsg = document.getElementById("flash-success");
+    const errorMsg = document.getElementById("flash-error");
+    if (successMsg) successMsg.style.display = "none";
+    if (errorMsg) errorMsg.style.display = "none";
+  }, 4000); // 4000ms = 4 seconds
+</script>
+
+
+<%- include('./adminpartials/footer.ejs') %>
